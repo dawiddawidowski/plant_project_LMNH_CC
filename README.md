@@ -1,9 +1,17 @@
 # plant_project_LMNH_CC
 This stores the group project work for the plant project in W12.
 
+## Entity Relationship Diagram (ERD)
+
+The relational database used for short-term storage is in 3rd Normal Form, as the data extracted from the API is structured and there is a clear but complex relationship between the entities.
+
+The database must be updated with a large number of frequent real-time transactional operations every minute, thus a database model favouring online transactional processing was chosen. This will provide a good balance between data integrity and flexibility.
+
+![Alt text](image.png)
+
 ## Architecture Diagram
 
-![Architecture Diagram][architecture_diagram.png]
+![Architecture Diagram](architecture_diagram.png)
 
 ## Assumptions Log
 
