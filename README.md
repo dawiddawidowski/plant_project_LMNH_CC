@@ -19,7 +19,13 @@ Extract:
 - Valid plant ids in range 0-51 (higher plant id's consistently return 'plant not found' error.)
 - Origin_location, image info, name and scientific names are assumed to be static.
 
-Databases:
-- Short term databases - contains only the changing data
-- Long term database - contains all information, and it seeded with the static data.
-  - The data from the short term database will be inserted into the long-term database every 24 hours.
+- The database is hard-coded with static values, which applies to the following databases:
+  - Botanist
+  - Plant
+  - License
+  - Origin
+  - Image
+
+- Transient values are added to the database, for each plant, every minute
+- Only data extracted within the last 24 hours is held in the database and used for the dashboard.
+- After 24 hours, the data is stored in an S3 bucket and the database is wiped.
