@@ -80,4 +80,4 @@ if __name__ == "__main__":
     write_to_csv(plants, "test_plant_data.csv")
     end_time = perf_counter()
 
-    print(f"Time take for extract: {end_time - start_time}")
+    print(f"Time take for extract: {end_time - start_time} seconds.")
