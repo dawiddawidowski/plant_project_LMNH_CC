@@ -6,3 +6,4 @@ This stores the group project work for the plant project in W12.
 
 Extract:
 - Valid plant ids in range 0-51 (higher plant id's consistently return 'plant not found' error.)
+- Origin_location, image info, name and scientific names are assumed to be static.

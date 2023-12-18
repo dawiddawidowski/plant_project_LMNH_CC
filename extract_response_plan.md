@@ -1,4 +1,5 @@
 ## Example Response
+Full response:
 
 `{
 	"botanist": {
@@ -34,6 +35,28 @@
 	"temperature": 23.560744633314833
 }`
 
+Missing `images` and `scientific_names` keys:
+
+`{
+	"botanist": {
+		"email": "gertrude.jekyll@lnhm.co.uk",
+		"name": "Gertrude Jekyll",
+		"phone": "001-481-273-3691x127"
+	},
+	"last_watered": "Sun, 17 Dec 2023 13:54:32 GMT",
+	"name": "Venus flytrap",
+	"origin_location": [
+			"33.95015",
+			"-118.03917",
+			"South Whittier",
+			"US",
+			"America/Los_Angeles"
+	],
+	"plant_id": 1,
+	"recording_taken": "2023-12-18 12:17:09",
+	"soil_moisture": 20.711332985236226,
+	"temperature": 12.023480448800825
+}`
 ## Errors list:
 
 - `{'error': 'plant not found', 'plant_id': 7}`
@@ -41,3 +64,5 @@
 - `{'error': 'plant sensor fault', 'plant_id': 15}`
 
 - `{'error': 'plant on loan to another museum', 'plant_id': 43}`
+
+- `43 {'error': 'plant on loan to another museum', 'plant_id': 43}`
