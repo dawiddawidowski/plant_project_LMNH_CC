@@ -41,7 +41,7 @@ def extract_changing_plant_details():
             plant_details = requests.get(
                 BASE_URL+str(plant_id), timeout=10).json()
             plant_dict["soil_moisture"] = plant_details.get("soil_moisture")
-            plant_dict["last_water"] = plant_details.get("last_water")
+            plant_dict["last_watered"] = plant_details.get("last_watered")
             plant_dict["recording_taken"] = plant_details.get(
                 "recording_taken")
             plant_dict["botanist"] = plant_details.get("botanist")
