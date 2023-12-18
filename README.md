@@ -1,4 +1,4 @@
-# plant_project_LMNH_CC
+# LNHM Plant Sensor Project
 This stores the group project work for the plant project in W12.
 
 ## Entity Relationship Diagram (ERD)
