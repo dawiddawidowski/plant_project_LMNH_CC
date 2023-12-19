@@ -37,7 +37,7 @@ Extract:
 - After 24 hours, the data is stored in an S3 bucket and the database is wiped.
 
 Transform: 
-- Soil moisture and temperature were rounded to 2dp and 1dp respectively.
+- Soil moisture and temperature have a precision of 2 decimal places.
 - Any rows which contain an error regardless of the type of error is removed from data
 
 - All valid data will be stored in long-term S3 bucket and not omitted, due to potential change of requirements in the future. 
