@@ -11,12 +11,13 @@ The database must be updated with a large number of frequent real-time transacti
 
 ## Architecture Diagram
 
+The main ETL pipeline Python script extracts data from the plant API, cleans the data, and loads the data into the database. The script is dockerised and ran as a continuous service on AWS ECS. The aim here is to monitor the plant health as close to every minute as possible. If one iteration of passing data through the pipeline takes longer than one minute (largely due to response times in communicating with the API), then the next iteration begins immediately. Otherwise, if the current iteration takes less than one minute to complete, the next iteration begins after one minute has passed from the start of the current iteration.
+
+Our chosen long-term storage solution is AWS S3, as it is an easy, scalable and cost-effective way to store the plant health data long-term. The data is stored in CSV-format with the CSV file containing all the data collated in the previous 24 hours, which comes from short-term RDS storage. AWS Eventbridge provides an easy way to trigger this every 24 hours, whilst a Lambda function is chosen to implement this transfer, as it is lightweight and relatively infrequent.
+
+In addition to the pipeline, the Python script running a Streamlit dashboard is configured as a continuous service on ECS. The script connects to the database and utilises the data contained in the database to create visualisations which provide insights into the health of each plant in the museum at any given moment.
+
 ![Architecture Diagram](architecture_diagram.png)
-
-The code to run python scripts which involve processing plant data and updating the dashboard, are hosted on Dockerised containers on an ECS as a service. This ensures the dashboard/extracting data is always running, regardless if the Task definition fails at any stage. 
-
-Long-term storage solution is AWS S3, as it is an easy, scalable and cost-effective way to store the long term data. The data is stored in CSV-format with the CSV file containing all the data collated in previous 24 hours, which comes from short-term RDS storage. AWS Eventbridge provides an easy way to trigger this every 24 hours, whilst a Lambda function is chosen to implement this transfer, as it is lightweight and relatively infrequent.
-
 
 ## Assumptions Log
 
@@ -36,7 +37,7 @@ Extract:
 - After 24 hours, the data is stored in an S3 bucket and the database is wiped.
 
 Transform: 
-- Soil moisture and temperature were rounded to 2dp and 1dp respectively.
+- Soil moisture and temperature have a precision of 2 decimal places.
 - Any rows which contain an error regardless of the type of error is removed from data
 
 - All valid data will be stored in long-term S3 bucket and not omitted, due to potential change of requirements in the future. 
