@@ -1,3 +1,8 @@
+"""
+Testing suite for the extract script, including base and edge cases
+and mocking for all functions in the script.
+"""
+
 import io
 import sys
 import unittest
