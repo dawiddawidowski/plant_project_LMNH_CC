@@ -58,6 +58,7 @@ def extract_changing_plant_details():
         except requests.exceptions.JSONDecodeError:
             print(plant_id, "plant not found")
 
+    print("Extracted plants from API.")
     return plants_list
 
 
@@ -76,6 +77,8 @@ def write_to_csv(details_list: list, filename: str):
 
         for entry in details_list:
             writer.writerow(entry)
+
+        print("Wrote CSV file in extract script.")
 
 
 if __name__ == "__main__":
