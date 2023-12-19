@@ -1,6 +1,10 @@
-import requests
+import io
+import sys
 import unittest
 from unittest.mock import patch, MagicMock
+
+import requests
+
 from sample_extract import extract_plant_details, extract_changing_plant_details
 
 sample_data = {
@@ -30,6 +34,10 @@ sample_data = {
     "soil_moisture": 95.22236107163602,
     "temperature": 13.171628371788849
 }
+
+
+class CustomJSONDecodeError(JSONDecodeError):
+    pass
 
 
 class TestRawDataFunction(unittest.TestCase):
