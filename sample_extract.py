@@ -12,7 +12,7 @@ MAX_PLANT_NUM = 51
 
 
 def extract_plant_details():
-    """"Returns all raw data about plants, handling possible API errors."""
+    """"Returns all raw data about plants, handling possible API request errors."""
 
     plants_list = []
     for plant_id in range(MAX_PLANT_NUM):
@@ -21,7 +21,7 @@ def extract_plant_details():
                 BASE_URL+str(plant_id), timeout=10).json()
             plants_list.append(plant_details)
         except requests.exceptions.JSONDecodeError as errj:
-            print(plant_id, "plant not found" + errj)
+            print(plant_id, "Error, Plant not found" + errj)
         except requests.exceptions.HTTPError as errh:
             print("An Http Error occurred:" + repr(errh))
         except requests.exceptions.ConnectionError as errc:
