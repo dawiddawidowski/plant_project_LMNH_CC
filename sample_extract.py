@@ -12,7 +12,7 @@ MAX_PLANT_NUM = 51
 
 
 def extract_plant_details():
-    """"Returns all raw data about plants."""
+    """"Returns all raw data about plants, handling possible API errors."""
 
     plants_list = []
     for plant_id in range(MAX_PLANT_NUM):
