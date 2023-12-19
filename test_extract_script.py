@@ -113,20 +113,25 @@ class TestWriteToCSVFunction(unittest.TestCase):
             "name": "fake_plant",
             "plant_id": 1
         }]
-        write_to_csv(data_sample, "test_file.csv")
 
-        # Expected written data
-        expected_data = {
-            "botanist": {
-                "name": "fake name"
-            },
-            "name": "fake_plant",
-            "plant_id": 1
-        }
+        # Patch the built-in open function to prevent file creation
+        with patch('builtins.open', create=True):
+            write_to_csv(data_sample, "test_file.csv")
 
-        # Assert writerow is called once with the passed in entry
-        mock_csv_writer.return_value.writerow.assert_called_once_with(
-            expected_data)
+        # write_to_csv(data_sample, "test_file.csv")
+
+            # Expected written data
+            expected_data = {
+                "botanist": {
+                    "name": "fake name"
+                },
+                "name": "fake_plant",
+                "plant_id": 1
+            }
+
+            # Assert writerow is called once with the passed in entry
+            mock_csv_writer().writerow.assert_called_once_with(
+                expected_data)
 
     @patch('csv.DictWriter')
     def test_write_to_csv_multiple(self, mock_csv_writer):
@@ -148,33 +153,35 @@ class TestWriteToCSVFunction(unittest.TestCase):
             "plant_id": 2
         }]
 
-        write_to_csv(data_sample, "test_file.csv")
+        # Patch the built-in open function to prevent file creation
+        with patch('builtins.open', create=True):
+            write_to_csv(data_sample, "test_file.csv")
 
-        # Expected written data
-        expected_data = [
-            {
-                "botanist": {
-                    "name": "fake name"
+            # Expected written data
+            expected_data = [
+                {
+                    "botanist": {
+                        "name": "fake name"
+                    },
+                    "name": "fake_plant",
+                    "plant_id": 1
                 },
-                "name": "fake_plant",
-                "plant_id": 1
-            },
-            {
-                "botanist": {
-                    "name": "fake name2"
-                },
-                "name": "fake_plant2",
-                "plant_id": 2
-            }
-        ]
+                {
+                    "botanist": {
+                        "name": "fake name2"
+                    },
+                    "name": "fake_plant2",
+                    "plant_id": 2
+                }
+            ]
 
-        print(expected_data[0], expected_data[1])
+            print(expected_data[0], expected_data[1])
 
-        # Assert writerow is called once with the passed in entry
-        mock_csv_writer.return_value.writerow.assert_has_calls([
-            unittest.mock.call(expected_data[0]),
-            unittest.mock.call(expected_data[1])
-        ])
+            # Assert writerow is called once with the passed in entry
+            mock_csv_writer().writerow.assert_has_calls([
+                unittest.mock.call(expected_data[0]),
+                unittest.mock.call(expected_data[1])
+            ])
 
     @patch('csv.DictWriter')
     def test_write_to_csv_empty(self, mock_csv_writer):
@@ -185,10 +192,11 @@ class TestWriteToCSVFunction(unittest.TestCase):
 
         # Create fake data
         data_sample = []
-        write_to_csv(data_sample, "test_file.csv")
+        # write_to_csv(data_sample, "test_file.csv")
 
-        # Expected written data
-        expected_data = {}
+        # Patch the built-in open function to actual file creation
+        with patch('builtins.open', create=True):
+            write_to_csv(data_sample, "test_file.csv")
 
-        # Assert writerow is called once with the passed in entry
-        mock_csv_writer.return_value.writerow.assert_not_called()
+            # Assert writerow is called once with the passed in entry
+            mock_csv_writer().writerow.assert_not_called()
