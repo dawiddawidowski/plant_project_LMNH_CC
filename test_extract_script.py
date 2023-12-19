@@ -173,8 +173,6 @@ class TestWriteToCSVFunction(unittest.TestCase):
                 }
             ]
 
-            print(expected_data[0], expected_data[1])
-
             # Assert writerow is called once with the passed in entry
             mock_csv_writer().writerow.assert_has_calls([
                 unittest.mock.call(expected_data[0]),
