@@ -118,8 +118,6 @@ class TestWriteToCSVFunction(unittest.TestCase):
         with patch('builtins.open', create=True):
             write_to_csv(data_sample, "test_file.csv")
 
-        # write_to_csv(data_sample, "test_file.csv")
-
             # Expected written data
             expected_data = {
                 "botanist": {
