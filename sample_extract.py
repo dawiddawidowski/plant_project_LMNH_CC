@@ -12,7 +12,7 @@ MAX_PLANT_NUM = 51
 
 
 def extract_plant_details():
-    """"Returns all raw data about plants"""
+    """"Returns all raw data about plants."""
 
     plants_list = []
     for plant_id in range(MAX_PLANT_NUM):
@@ -20,8 +20,6 @@ def extract_plant_details():
             plant_details = requests.get(
                 BASE_URL+str(plant_id), timeout=10).json()
             plants_list.append(plant_details)
-            # extract only relevant values/ keys
-            # soil moisture, last_water, recording_taken, botanist, temperature
         except requests.exceptions.JSONDecodeError:
             print(plant_id, "plant not found")
 
@@ -31,7 +29,7 @@ def extract_plant_details():
 def extract_changing_plant_details():
     """
     Extracts only the changing plant information
-    soil moisture, last_water, recording_taken, botanist, temperature
+    soil moisture, last_water, recording_taken, botanist, temperature.
     """
 
     plants_list = []
@@ -49,8 +47,6 @@ def extract_changing_plant_details():
             plant_dict["error"] = plant_details.get("error")
             plant_dict["plant_id"] = plant_id
             plants_list.append(plant_dict)
-            # extract only relevant values/ keys
-            # soil moisture, last_water, recording_taken, botanist, temperature
         except requests.exceptions.JSONDecodeError:
             print(plant_id, "plant not found")
 

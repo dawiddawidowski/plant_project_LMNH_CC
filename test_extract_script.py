@@ -103,7 +103,7 @@ class TestWriteToCSVFunction(unittest.TestCase):
 
     @patch('csv.DictWriter')
     def test_write_to_csv(self, mock_csv_writer):
-        """csv.DictWriter() should be called when the function is called."""
+        """csv.DictWriter().writerow should be called when the function is called."""
 
         # Create fake data
         data_sample = [{
@@ -130,7 +130,7 @@ class TestWriteToCSVFunction(unittest.TestCase):
 
     @patch('csv.DictWriter')
     def test_write_to_csv_multiple(self, mock_csv_writer):
-        """csv.DictWriter() should be called twice when the function is called."""
+        """csv.DictWriter().writerow should be called twice when the function is called."""
 
         # Create fake data
         data_sample = [{
@@ -175,3 +175,20 @@ class TestWriteToCSVFunction(unittest.TestCase):
             unittest.mock.call(expected_data[0]),
             unittest.mock.call(expected_data[1])
         ])
+
+    @patch('csv.DictWriter')
+    def test_write_to_csv_empty(self, mock_csv_writer):
+        """
+        csv.DictWriter().writerow should be not be called when
+        the function is called using an empty details_list.
+        """
+
+        # Create fake data
+        data_sample = []
+        write_to_csv(data_sample, "test_file.csv")
+
+        # Expected written data
+        expected_data = {}
+
+        # Assert writerow is called once with the passed in entry
+        mock_csv_writer.return_value.writerow.assert_not_called()
