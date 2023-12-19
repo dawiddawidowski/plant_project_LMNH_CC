@@ -7,7 +7,7 @@ The relational database used for short-term storage is in 3rd Normal Form, as th
 
 The database must be updated with a large number of frequent real-time transactional operations every minute, thus a database model favouring online transactional processing was chosen. This will provide a good balance between data integrity and flexibility.
 
-![Alt text](image.png)
+![Alt text](erd_diagram.png)
 
 ## Architecture Diagram
 
