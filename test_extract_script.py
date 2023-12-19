@@ -1,11 +1,12 @@
 import io
 import sys
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, Mock
 
 import requests
 
-from sample_extract import extract_plant_details, extract_changing_plant_details
+from sample_extract import (extract_plant_details, extract_changing_plant_details,
+                            write_to_csv)
 
 sample_data = {
     "botanist": {
@@ -36,15 +37,12 @@ sample_data = {
 }
 
 
-class CustomJSONDecodeError(JSONDecodeError):
-    pass
-
-
 class TestRawDataFunction(unittest.TestCase):
+    """Tests involving extract_plant_details()."""
 
     @patch('requests.get')
     def test_successfully_gets_info(self, mock_requests_get):
-        """Tests that essential plant details are successfully extracted"""
+        """Tests that essential plant details are successfully extracted."""
 
         mock_response = MagicMock()
         mock_response.json.return_value = sample_data
@@ -59,7 +57,7 @@ class TestRawDataFunction(unittest.TestCase):
 
     @patch('requests.get')
     def test_json_error_handling(self, mock_requests_get):
-        """Tests that nothing is returned if the JSON exception is raised"""
+        """Tests that nothing is returned if the JSON exception is raised."""
 
         mock_response = MagicMock()
         mock_response.json.side_effect = requests.exceptions.JSONDecodeError(
@@ -71,10 +69,11 @@ class TestRawDataFunction(unittest.TestCase):
 
 
 class TestTransientDataFunction(unittest.TestCase):
+    """Tests involving extract_changing_plant_details()."""
 
     @patch('requests.get')
     def test_returns_only_essential_values(self, mock_requests_get):
-        """Tests that the function only returns the transient data"""
+        """Tests that the function only returns the transient data."""
 
         mock_response = MagicMock()
         mock_response.json.return_value = sample_data
@@ -86,3 +85,93 @@ class TestTransientDataFunction(unittest.TestCase):
         self.assertIn("recording_taken", result[0])
         self.assertIn("last_watered", result[0])
         self.assertIn("temperature", result[0])
+
+    @patch('requests.get')
+    def test_json_error_handling(self, mock_requests_get):
+        """Tests that nothing is returned if the JSON exception is raised."""
+
+        mock_response = MagicMock()
+        mock_response.json.side_effect = requests.exceptions.JSONDecodeError(
+            "JSONDecodeError", "", 1)
+        mock_requests_get.return_value = mock_response
+        result = extract_changing_plant_details()
+
+        self.assertEqual(len(result), 0)
+
+
+class TestWriteToCSVFunction(unittest.TestCase):
+
+    @patch('csv.DictWriter')
+    def test_write_to_csv(self, mock_csv_writer):
+        """csv.DictWriter() should be called when the function is called."""
+
+        # Create fake data
+        data_sample = [{
+            "botanist": {
+                "name": "fake name"
+            },
+            "name": "fake_plant",
+            "plant_id": 1
+        }]
+        write_to_csv(data_sample, "test_file.csv")
+
+        # Expected written data
+        expected_data = {
+            "botanist": {
+                "name": "fake name"
+            },
+            "name": "fake_plant",
+            "plant_id": 1
+        }
+
+        # Assert writerow is called once with the passed in entry
+        mock_csv_writer.return_value.writerow.assert_called_once_with(
+            expected_data)
+
+    @patch('csv.DictWriter')
+    def test_write_to_csv_multiple(self, mock_csv_writer):
+        """csv.DictWriter() should be called twice when the function is called."""
+
+        # Create fake data
+        data_sample = [{
+            "botanist": {
+                "name": "fake name"
+            },
+            "name": "fake_plant",
+            "plant_id": 1
+        },
+            {
+            "botanist": {
+                "name": "fake name2"
+            },
+            "name": "fake_plant2",
+            "plant_id": 2
+        }]
+
+        write_to_csv(data_sample, "test_file.csv")
+
+        # Expected written data
+        expected_data = [
+            {
+                "botanist": {
+                    "name": "fake name"
+                },
+                "name": "fake_plant",
+                "plant_id": 1
+            },
+            {
+                "botanist": {
+                    "name": "fake name2"
+                },
+                "name": "fake_plant2",
+                "plant_id": 2
+            }
+        ]
+
+        print(expected_data[0], expected_data[1])
+
+        # Assert writerow is called once with the passed in entry
+        mock_csv_writer.return_value.writerow.assert_has_calls([
+            unittest.mock.call(expected_data[0]),
+            unittest.mock.call(expected_data[1])
+        ])
