@@ -3,5 +3,6 @@ pylint
 pytest
 pytest-cov
 pandas
-boto3
 python-dotenv
+sqlalchemy
+boto3
