@@ -54,6 +54,7 @@ def extract_changing_plant_details():
             plant_dict["temperature"] = plant_details.get("temperature")
             plant_dict["error"] = plant_details.get("error")
             plant_dict["plant_id"] = plant_id
+            plant_dict["plant_name"] = plant_details.get("name")
             plants_list.append(plant_dict)
         except requests.exceptions.JSONDecodeError:
             print(plant_id, "plant not found")
