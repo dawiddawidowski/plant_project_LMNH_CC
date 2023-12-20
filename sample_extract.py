@@ -31,8 +31,16 @@ def extract_changing_plant_details():
             plant_dict["plant_id"] = plant_id
             plant_dict["plant_name"] = plant_details.get("name")
             plants_list.append(plant_dict)
-        except requests.exceptions.JSONDecodeError:
-            print(plant_id, "plant not found")
+        except requests.exceptions.JSONDecodeError as errj:
+            print(plant_id, "Error, Plant not found" + errj)
+        except requests.exceptions.HTTPError as errh:
+            print("An Http Error occurred:" + repr(errh))
+        except requests.exceptions.ConnectionError as errc:
+            print("An Error Connecting to the API occurred:" + repr(errc))
+        except requests.exceptions.Timeout as errt:
+            print("A Timeout Error occurred:" + repr(errt))
+        except requests.exceptions.RequestException as err:
+            print("An Unknown Error occurred" + repr(err))
 
     print("Extracted plant information from API.")
     return pd.DataFrame(plants_list)
