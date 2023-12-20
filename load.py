@@ -19,7 +19,6 @@ def update_reading(connection, new_data: pd.DataFrame):
 
         plant_data = new_data.values.tolist()[:1]
 
-        print(plant_data)
         for reading in plant_data:
 
             conn.execute(sql.text("USE plants"))

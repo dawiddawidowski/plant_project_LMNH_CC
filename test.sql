@@ -1,2 +1,0 @@
-"""INSERT INTO s_alpha.PLANT (plant_id, botanist_id, soil_moisture, temperature, last_watered, recording_taken) VALUES 
-                         (:plant),(:botanist),(:moisture),(:temperature),(:watered_at),(:recording_at)"""
