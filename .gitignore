@@ -4,5 +4,7 @@
 *.json
 venv
 .coverage
-__pytest_cache__
+.__pytest_cache__
 .DS_Store
+__pycache__/
+.pytest_cache/

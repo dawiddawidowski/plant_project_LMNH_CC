@@ -3,8 +3,8 @@ This is a script to download a sample csv file of plan data.
 """
 
 import csv
-import requests
 from time import perf_counter
+import requests
 
 
 BASE_URL = 'https://data-eng-plants-api.herokuapp.com/plants/'
@@ -12,7 +12,7 @@ MAX_PLANT_NUM = 51
 
 
 def extract_plant_details():
-    """"Returns all raw data about plants"""
+    """"Returns all raw data about plants, handling possible API request errors."""
 
     plants_list = []
     for plant_id in range(MAX_PLANT_NUM):
@@ -20,10 +20,16 @@ def extract_plant_details():
             plant_details = requests.get(
                 BASE_URL+str(plant_id), timeout=10).json()
             plants_list.append(plant_details)
-            # extract only relevant values/ keys
-            # soil moisture, last_water, recording_taken, botanist, temperature
-        except requests.exceptions.JSONDecodeError:
-            print(plant_id, "plant not found")
+        except requests.exceptions.JSONDecodeError as errj:
+            print(plant_id, "Error, Plant not found" + errj)
+        except requests.exceptions.HTTPError as errh:
+            print("An Http Error occurred:" + repr(errh))
+        except requests.exceptions.ConnectionError as errc:
+            print("An Error Connecting to the API occurred:" + repr(errc))
+        except requests.exceptions.Timeout as errt:
+            print("A Timeout Error occurred:" + repr(errt))
+        except requests.exceptions.RequestException as err:
+            print("An Unknown Error occurred" + repr(err))
 
     return plants_list
 
@@ -31,7 +37,7 @@ def extract_plant_details():
 def extract_changing_plant_details():
     """
     Extracts only the changing plant information
-    soil moisture, last_water, recording_taken, botanist, temperature
+    soil moisture, last_water, recording_taken, botanist, temperature.
     """
 
     plants_list = []
@@ -49,11 +55,10 @@ def extract_changing_plant_details():
             plant_dict["error"] = plant_details.get("error")
             plant_dict["plant_id"] = plant_id
             plants_list.append(plant_dict)
-            # extract only relevant values/ keys
-            # soil moisture, last_water, recording_taken, botanist, temperature
         except requests.exceptions.JSONDecodeError:
             print(plant_id, "plant not found")
 
+    print("Extracted plants from API.")
     return plants_list
 
 
@@ -73,11 +78,13 @@ def write_to_csv(details_list: list, filename: str):
         for entry in details_list:
             writer.writerow(entry)
 
+        print("Wrote CSV file in extract script.")
+
 
 if __name__ == "__main__":
     start_time = perf_counter()
     plants = extract_changing_plant_details()
-    write_to_csv(plants, "test_plant_data.csv")
+    write_to_csv(plants, "extracted_readings_data.csv")
     end_time = perf_counter()
 
     print(f"Time take for extract: {end_time - start_time} seconds.")

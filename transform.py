@@ -82,7 +82,6 @@ def clean_data(filename: str) -> pd.DataFrame:
              'medium_url', 'regular_url', 'original_url', 'small_url', 'thumbnail_url'  # Image table
              ]
     df = df[order]
-
     return df
 
 
