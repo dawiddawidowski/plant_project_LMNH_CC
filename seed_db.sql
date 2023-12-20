@@ -71,17 +71,41 @@ GO
 
 CREATE TABLE s_gamma.reading (
     reading_id INT NOT NULL IDENTITY(1, 1) PRIMARY KEY,
-    plant_id INT NOT NULL,
-    botanist_id INT NOT NULL,
-    soil_moisture DECIMAL(4,2) NOT NULL,
-    temperature DECIMAL(3,2) NOT NULL,
-    last_watered TIMESTAMP NOT NULL,
-    recording_taken DATETIME2(6) NOT NULL,
+    plant_id INT NULL,
+    botanist_id INT NULL,
+    soil_moisture DECIMAL(4,2) NULL,
+    temperature DECIMAL(4,2) NULL,
+    last_watered DATETIME2(2) NULL,
+    recording_taken DATETIME2(2) NULL,
     CONSTRAINT fk_plant_id FOREIGN KEY (plant_id) REFERENCES s_gamma.plant (plant_id),
     CONSTRAINT fk_botanist_id FOREIGN KEY (botanist_id) REFERENCES s_gamma.botanist(botanist_id)
 
 );
 GO
+
+-- change last_watered to a dateime column (since changing format)
+ALTER TABLE s_gamma.reading DROP COLUMN last_watered;
+GO
+
+ALTER TABLE s_gamma.reading ADD last_watered datetime2(2);
+GO
+
+-- alter table to default to null for sake of debugging
+ALTER TABLE s_gamma.reading ALTER COLUMN plant_id INT NULL;
+GO
+ALTER TABLE s_gamma.reading ALTER COLUMN botanist_id INT NULL;
+GO
+ALTER TABLE s_gamma.reading ALTER COLUMN soil_moisture DECIMAL(4,2) NULL;
+GO
+ALTER TABLE s_gamma.reading ALTER COLUMN temperature DECIMAL(4,2) NULL;
+GO
+ALTER TABLE s_gamma.reading ALTER COLUMN last_watered DATETIME2(2) NULL;
+GO
+ALTER TABLE s_gamma.reading ALTER COLUMN recording_taken DATETIME2(2) NULL;
+GO
+
+-- ALTER TABLE s_gamma.reading ALTER COLUMN last_watered datetime2(6);
+-- GO
 
 -- Sample inserts so other parts of pipeline can be tested
 INSERT INTO s_gamma.botanist VALUES ('Carl Linnaeus', '(146)994-1635x35992', 'carl.linnaeus@lnhm.co.uk') -- plant 0

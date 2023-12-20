@@ -21,7 +21,11 @@ def clean_reading_data(filename: str) -> pd.DataFrame:
     df = pd.read_csv(filename)
 
     # Remove any rows containing errors
-    df = df[df['error'].isna()]
+    # df = df[df['error'].isna()]
+
+    # Convert the date format
+    df['last_watered'] = pd.to_datetime(
+        df['last_watered'], format='%a, %d %b %Y %H:%M:%S GMT')
 
     # Columns for 'reading' table
     df['soil_moisture'] = df['soil_moisture'].round(2)

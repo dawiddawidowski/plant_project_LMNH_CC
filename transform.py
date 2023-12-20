@@ -20,9 +20,6 @@ def clean_data(filename: str) -> pd.DataFrame:
 
     df = pd.read_csv(filename)
 
-    # Remove any rows containing errors
-    df = df[df['error'].isna()]
-
     # Columns for 'reading' table
     df['soil_moisture'] = df['soil_moisture'].round(2)
     df['temperature'] = df['temperature'].round(2)
