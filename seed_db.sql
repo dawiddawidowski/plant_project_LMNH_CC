@@ -22,47 +22,47 @@ GO
 -- Latitude/longitude precision matching API response.
 CREATE TABLE s_gamma.origin (
     origin_id INT NOT NULL IDENTITY(1, 1) PRIMARY KEY,
-    time_zone_name VARCHAR(100) NOT NULL,
-    country VARCHAR(50) NOT NULL,
-    region VARCHAR(50) NOT NULL,
+    country_code VARCHAR(100) NOT NULL,
     latitude DECIMAL(7,5) NOT NULL,
     longitude DECIMAL(8,5) NOT NULL,
+    location VARCHAR(50) NOT NULL,
+    region VARCHAR(50) NOT NULL
 );
 GO
 
 CREATE TABLE s_gamma.botanist (
     botanist_id INT NOT NULL IDENTITY(1, 1) PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    phone_number VARCHAR(25),
-    email VARCHAR(50)
+    botanist_name VARCHAR(50) NOT NULL,
+    botanist_phone VARCHAR(25),
+    botanist_email VARCHAR(50)
 );
 GO
 
 CREATE TABLE s_gamma.license (
     license_id INT NOT NULL IDENTITY(1, 1) PRIMARY KEY,
-    name VARCHAR(100),
-    url TEXT,
-    number SMALLINT,
+    license_name VARCHAR(100),
+    license_url TEXT,
+    license SMALLINT,
 );
 GO
 
 CREATE TABLE s_gamma.image (
     image_id INT NOT NULL IDENTITY(1, 1) PRIMARY KEY,
-    medium_url TEXT,
+    medium_url NVARCHAR(150),
     regular_url TEXT,
     original_url TEXT,
     small_url TEXT,
-    thumbnail_url TEXT,
+    thumbnail TEXT,
     license_id INT,
     CONSTRAINT fk_license_id FOREIGN KEY (license_id) REFERENCES s_gamma.license (license_id)
 );
 GO
 
 CREATE TABLE s_gamma.plant (
-    plant_id INT NOT NULL IDENTITY(1, 1) PRIMARY KEY,
-    plant_name VARCHAR(100) NOT NULL,
+    plant_id INT NOT NULL IDENTITY(0, 1) PRIMARY KEY,
+    plant_name VARCHAR(100),
     scientific_name VARCHAR(100),
-    origin_id INT NOT NULL,
+    origin_id INT,
     image_id INT,
     CONSTRAINT fk_origin_id FOREIGN KEY (origin_id) REFERENCES s_gamma.origin (origin_id),
     CONSTRAINT fk_image_id FOREIGN KEY (image_id) REFERENCES s_gamma.image (image_id)
