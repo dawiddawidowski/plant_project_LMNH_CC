@@ -1,9 +1,9 @@
-"""
-This is a script to download a sample csv file of plan data.
-"""
+'''Script to extract the readings information for each plant and stores
+this in a pandas DataFrame.'''
 
 from time import perf_counter
 import requests
+
 import pandas as pd
 
 
@@ -12,10 +12,8 @@ MAX_PLANT_NUM = 51
 
 
 def extract_changing_plant_details():
-    """
-    Extracts only the changing plant information
-    soil moisture, last_water, recording_taken, botanist, temperature.
-    """
+    '''Extracts only the necessary information for each plant reading
+    at a fixed point in time and stores this in a pandas DataFrame.'''
 
     plants_list = []
     for plant_id in range(MAX_PLANT_NUM):
@@ -35,16 +33,14 @@ def extract_changing_plant_details():
             plants_list.append(plant_dict)
         except requests.exceptions.JSONDecodeError:
             print(plant_id, "plant not found")
-    print("Extracted plants from API.")
 
+    print("Extracted plant information from API.")
     return pd.DataFrame(plants_list)
 
 
 if __name__ == "__main__":
+
     start_time = perf_counter()
     plants = extract_changing_plant_details()
-    print(plants)
-    # write_to_csv(plants, "extracted_readings_data.csv")
     end_time = perf_counter()
-
     print(f"Time take for extract: {end_time - start_time} seconds.")
