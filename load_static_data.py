@@ -152,7 +152,7 @@ def populate_plant_table(table: str, column_list: list[str], data: str) -> None:
 
     # Get the data
     df = pd.read_csv(data)
-    rows = df[column_list].drop_duplicates().values.tolist()
+    rows = df[column_list].values.tolist()
 
     for row in rows:
         if isinstance(row[1], float):
@@ -346,32 +346,32 @@ def origin_id_in_plant_table() -> None:
 def main():
     '''Seeds all the data in the database tables.'''
 
-    # populate_db_table('origin', ['country_code', 'latitude',
-    #                   'longitude', 'location', 'region'], 'master_plant.csv')
+    populate_db_table('origin', ['country_code', 'latitude',
+                      'longitude', 'location', 'region'], 'master_plant.csv')
 
-    # populate_db_table(
-    #     'botanist', ['botanist_name', 'botanist_phone', 'botanist_email'], 'master_plant.csv')
+    populate_db_table(
+        'botanist', ['botanist_name', 'botanist_phone', 'botanist_email'], 'master_plant.csv')
 
-    # populate_db_table(
-    #     'license', ['license_name', 'license_url', 'license'], 'master_plant.csv')
+    populate_db_table(
+        'license', ['license_name', 'license_url', 'license'], 'master_plant.csv')
 
-    # populate_db_table(
-    #     'image', ['medium_url', 'regular_url', 'original_url',
-    #               'small_url', 'thumbnail'], 'master_plant.csv')
+    populate_db_table(
+        'image', ['medium_url', 'regular_url', 'original_url',
+                  'small_url', 'thumbnail'], 'master_plant.csv')
 
-    # license_id_in_image_table()
+    license_id_in_image_table()
 
     # populate_plant_table(
     #     'plant', ['plant_name', 'scientific_name'], 'master_plant.csv')
 
-    # image_id_in_plant_table()
+    image_id_in_plant_table()
 
-    # print(origin_id_in_plant_table())
+    origin_id_in_plant_table()
 
 
 if __name__ == "__main__":
 
     load_dotenv()
     # write_to_csv(get_raw_data(), 'master_plant.csv')
-
+    main()
     # print(image_id_in_plant_table())
