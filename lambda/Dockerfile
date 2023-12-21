@@ -1,11 +1,9 @@
 FROM public.ecr.aws/lambda/python:latest
 
-WORKDIR ${LAMBDA_TASK_ROOT}
-
 COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-COPY write_to_bucket .
+COPY upload_old_data.py .
 
-CMD [ "generate_report.report_handler" ] 
+CMD [ "upload_old_data.lambda_handler" ] 

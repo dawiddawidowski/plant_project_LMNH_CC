@@ -6,7 +6,9 @@ import pandas as pd
 import boto3
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, sql
+import s3fs
 
+load_dotenv()
 
 def get_database_connection(config):
     """Returns a live database connection."""
@@ -39,12 +41,12 @@ def write_to_bucket(s3_client: boto3.client, data: pd.DataFrame) -> None:
     csv_format = datetime.now().strftime('%Y-%m-%d')
 
     csv_file_name = f'{csv_format}.csv'
-    data.to_csv(csv_file_name, index=False)
-
+    
     bucket_name = 'c9-beetle-lmnh-plant-data'
 
-    s3_object_key = f'{current_date}/{csv_file_name}'
-    s3_client.upload_file(csv_file_name, bucket_name, s3_object_key)
+    s3 = s3fs.S3FileSystem(anon=False)
+    with s3.open(f'{bucket_name}/{current_date}/{csv_file_name}','w') as f:
+        data.to_csv(f, index=False)
 
 
 def lambda_handler(event=None, context=None):
@@ -52,11 +54,7 @@ def lambda_handler(event=None, context=None):
     db_conn = get_database_connection(environ)
     reading_data = get_todays_data(db_conn)
 
-    s3 = boto3.client('s3', aws_access_key_id=environ["AWS_ACCESS_KEY_ID"],
-                            aws_secret_access_key=environ["AWS_SECRET_ACCESS_KEY"])
+    s3 = boto3.client('s3', aws_access_key_id=environ["AKI"],
+                            aws_secret_access_key=environ["SAK"])
     write_to_bucket(s3, reading_data)
-
-
-if __name__ == "__main__":
-    load_dotenv()
-    lambda_handler()
+    print("File uploaded")
