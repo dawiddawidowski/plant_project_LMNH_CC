@@ -1,0 +1,7 @@
+pylint
+pytest
+pytest-cov
+pandas
+python-dotenv
+sqlalchemy
+boto3
