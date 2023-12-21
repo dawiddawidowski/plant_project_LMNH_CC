@@ -41,8 +41,8 @@ def fake_df():
         "plant_id": 2,
         "error": None,
         "recording_taken": "2023-12-21 10:20:34",
-        "soil_moisture": 33.95801666242039,
-        "temperature": 9.111493582669517
+        "soil_moisture": 30.91501666242039,
+        "temperature": 9.150493582669517
     }]
 
     return pd.DataFrame(fake_plants)
@@ -55,5 +55,18 @@ class TestCleanReadingData():
         """The values in the last_watered column should be converted to a datetime64[ns] type."""
 
         result_df = clean_reading_data(fake_df)
-        print(result_df['last_watered'].dtype)
         assert result_df['last_watered'].dtype == 'datetime64[ns]'
+
+    def test_soil_moisture_rounded(self, fake_df):
+        """The values in the soil_moisture column should be rounded to 2 d.p."""
+
+        result_df = clean_reading_data(fake_df)
+        assert result_df['soil_moisture'][0] == 33.96
+        assert result_df['soil_moisture'][1] == 30.92
+
+    def test_temperature_rounded(self, fake_df):
+        """The values in the temperature column should be rounded to 2 d.p."""
+
+        result_df = clean_reading_data(fake_df)
+        assert result_df['temperature'][0] == 9.11
+        assert result_df['temperature'][1] == 9.15
