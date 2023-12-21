@@ -15,6 +15,7 @@ from transform_readings import clean_reading_data
 
 @pytest.fixture
 def fake_df():
+    """Fixture for testing valid base cases."""
 
     fake_plants = [{
         "botanist": {
@@ -50,6 +51,7 @@ def fake_df():
 
 @pytest.fixture
 def fake_df_negative_soil_temp():
+    """Fixture for testing negative soil moisture and temperature edge case."""
 
     fake_plants = [{
         "botanist": {
@@ -85,6 +87,7 @@ def fake_df_negative_soil_temp():
 
 @pytest.fixture
 def fake_df_zero_soil_temp():
+    """Fixture for testing zero soil moisture and temperature edge case."""
 
     fake_plants = [{
         "botanist": {
@@ -115,10 +118,12 @@ def fake_df_zero_soil_temp():
         "temperature": 9.150493582669517
     }]
 
+    return pd.DataFrame(fake_plants)
+
 
 @pytest.fixture
 def fake_df_high_soil_temp():
-
+    """Fixture for testing excessively high soil moisture and temperature edge case."""
     fake_plants = [{
         "botanist": {
             "email": "fake_email_1",
@@ -147,6 +152,8 @@ def fake_df_high_soil_temp():
         "soil_moisture": 30.91501666242039,
         "temperature": 9.150493582669517
     }]
+
+    return pd.DataFrame(fake_plants)
 
 
 class TestCleanReadingData():
@@ -211,6 +218,56 @@ class TestCleanReadingData():
         assert result_df.columns[8] == 'botanist_email'
         assert result_df.columns[9] == 'error'
 
-    def test_negative_soil_moisture():
-        """The negative soil_moisture column values should be Null."""
-        df_fake = pd.DataFrame()
+    def test_negative_soil_moisture(self, fake_df_negative_soil_temp):
+        """A reading (row) with a negative soil_moisture column value should be discarded."""
+
+        result_df = clean_reading_data(fake_df_negative_soil_temp)
+
+        assert result_df["soil_moisture"].get(0) is None
+        assert result_df["soil_moisture"][1] == 30.92
+        assert len(result_df["soil_moisture"]) == 1
+
+    def test_negative_temperature(self, fake_df_negative_soil_temp):
+        """A reading (row) with a negative temperature column value should be discarded."""
+
+        result_df = clean_reading_data(fake_df_negative_soil_temp)
+
+        assert result_df["temperature"].get(0) is None
+        assert result_df["temperature"][1] == 9.15
+        assert len(result_df["temperature"]) == 1
+
+    def test_high_temperature(self, fake_df_high_soil_temp):
+        """A reading (row) with an excessive temperature column value should be discarded."""
+
+        result_df = clean_reading_data(fake_df_high_soil_temp)
+
+        assert result_df["temperature"].get(0) is None
+        assert result_df["temperature"][1] == 9.15
+        assert len(result_df["temperature"]) == 1
+
+    def test_high_soil_moisture(self, fake_df_high_soil_temp):
+        """A reading (row) with an excessive soil_moisture column value should be discarded."""
+
+        result_df = clean_reading_data(fake_df_high_soil_temp)
+
+        assert result_df["soil_moisture"].get(0) is None
+        assert result_df["soil_moisture"][1] == 30.92
+        assert len(result_df["soil_moisture"]) == 1
+
+    def test_zero_temperature(self, fake_df_zero_soil_temp):
+        """A reading (row) with an zero temperature column value should be kept."""
+
+        result_df = clean_reading_data(fake_df_zero_soil_temp)
+
+        assert result_df["temperature"][0] == 0
+        assert result_df["temperature"][1] == 9.15
+        assert len(result_df["temperature"]) == 2
+
+    def test_zero_soil_moisture(self, fake_df_zero_soil_temp):
+        """A reading (row) with an zero soil_moisture column value should be kept."""
+
+        result_df = clean_reading_data(fake_df_zero_soil_temp)
+
+        assert result_df["soil_moisture"][0] == 0
+        assert result_df["soil_moisture"][1] == 30.92
+        assert len(result_df["soil_moisture"]) == 2
