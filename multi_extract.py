@@ -12,9 +12,11 @@ BASE_URL = 'https://data-eng-plants-api.herokuapp.com/plants/'
 MAX_PLANT_NUM = 51
 
 
-def extract_changing_plant_details(plant_id: int):
-    '''Extracts only the necessary information for each plant reading
-    at a fixed point in time and stores this in a pandas DataFrame.'''
+def extract_changing_plant_details(plant_id: int) -> dict:
+    """
+    Extracts only the necessary information for each plant reading
+    at a fixed point in time and stores this in a dictionary.
+    """
 
     try:
         plant_dict = {}
@@ -44,7 +46,11 @@ def extract_changing_plant_details(plant_id: int):
     return plant_dict
 
 
-def extract_all_plant_details():
+def extract_all_plant_details() -> pd.DataFrame:
+    """
+    Top level function which implements multiprocessing and returns a Data Frame
+    containing all plant details.
+    """
     plants_list = []
 
     # Implement multiprocessing
