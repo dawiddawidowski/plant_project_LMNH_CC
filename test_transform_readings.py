@@ -322,3 +322,4 @@ def test_error_reading(fake_df_error):
     print(test_value)
 
     assert test_value
+    assert result_df["soil_moisture"][1] == 30.92
