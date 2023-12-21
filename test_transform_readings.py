@@ -70,3 +70,42 @@ class TestCleanReadingData():
         result_df = clean_reading_data(fake_df)
         assert result_df['temperature'][0] == 9.11
         assert result_df['temperature'][1] == 9.15
+
+    def test_extracted_botanist_email_column(self, fake_df):
+        """The botanist column should be flattened to include a botanist_email column."""
+
+        result_df = clean_reading_data(fake_df)
+        assert result_df['botanist_email'][0] == "fake_email_1"
+        assert result_df['botanist_email'][1] == "fake_email_2"
+
+    def test_extracted_botanist_name_column(self, fake_df):
+        """The botanist column should be flattened to include a botanist_name column."""
+
+        result_df = clean_reading_data(fake_df)
+        assert result_df['botanist_name'][0] == "fake_name_1"
+        assert result_df['botanist_name'][1] == "fake_name_2"
+
+    def test_extracted_botanist_mobile_column(self, fake_df):
+        """The botanist column should be flattened to include a botanist_mobile column."""
+
+        result_df = clean_reading_data(fake_df)
+        assert result_df['botanist_mobile'][0] == "fake_phone_1"
+        assert result_df['botanist_mobile'][1] == "fake_phone_2"
+
+    def test_column_order(self, fake_df):
+        """
+        The resulting data frame columns should be in a specific order
+        for compatibility with load script.
+        """
+
+        result_df = clean_reading_data(fake_df)
+        assert result_df.columns[0] == 'plant_id'
+        assert result_df.columns[1] == 'plant_name'
+        assert result_df.columns[2] == 'soil_moisture'
+        assert result_df.columns[3] == 'temperature'
+        assert result_df.columns[4] == 'last_watered'
+        assert result_df.columns[5] == 'recording_taken'
+        assert result_df.columns[6] == 'botanist_name'
+        assert result_df.columns[7] == 'botanist_mobile'
+        assert result_df.columns[8] == 'botanist_email'
+        assert result_df.columns[9] == 'error'
