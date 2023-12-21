@@ -6,6 +6,11 @@ and puts it into an order ready to load into the database.
 
 import pandas as pd
 
+MIN_TEMPERATURE = 0
+MIN_SOIL_MOISTURE = 0
+MAX_TEMPERATURE = 40
+MAX_SOIL_MOISTURE = 100
+
 
 def get_field(row: str | None, field: str, value_type=str) -> str | None:
     '''Helper function to get a license or image field from a row in the DataFrame.'''
@@ -23,6 +28,17 @@ def clean_reading_data(df: pd.DataFrame) -> pd.DataFrame:
     # Convert the date format
     df['last_watered'] = pd.to_datetime(
         df['last_watered'], format='%a, %d %b %Y %H:%M:%S GMT')
+
+    # Remove any records where temperature or soil moisture invalid
+    bool_negative_temp = df['temperature'] >= MIN_TEMPERATURE
+    bool_max_temp = df['temperature'] <= MAX_TEMPERATURE
+    bool_null_temp = df['temperature'].isnull()
+    bool_negative_moist = df['soil_moisture'] >= MIN_SOIL_MOISTURE
+    bool_max_moist = df['soil_moisture'] <= MAX_SOIL_MOISTURE
+    bool_null_moist = df['soil_moisture'].isnull()
+
+    df = df[(bool_negative_temp & bool_max_temp) | bool_null_temp]
+    df = df[(bool_negative_moist & bool_max_moist) | bool_null_moist]
 
     # Columns for 'reading' table
     df['soil_moisture'] = df['soil_moisture'].round(2)

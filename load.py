@@ -36,20 +36,22 @@ def update_reading(connection, new_data: pd.DataFrame) -> None:
                                                   {"botanist_name": reading[6]}).fetchone()
 
             error = reading[-1]
-
-            # Do not insert erroneous transactions
-            if not error:
-                botanist_id = fetched_botanist_query[0]
-                insert_query = sql.text(
-                    """INSERT INTO s_gamma.reading 
-                    (plant_id, botanist_id, soil_moisture, temperature, last_watered, recording_taken) 
-                    VALUES (:plant, :botanist, :moisture, :temperature, :watered_at, :recording_at)""")
-                conn.execute(insert_query, {
-                    "plant": plant_id,
-                    "botanist": botanist_id,
-                    "moisture": reading[2],
-                    "temperature": reading[3],
-                    "watered_at": reading[4],
-                    "recording_at": reading[5]
-                })
-                conn.commit()
+            try:
+                # Do not insert erroneous transactions
+                if not error:
+                    botanist_id = fetched_botanist_query[0]
+                    insert_query = sql.text(
+                        """INSERT INTO s_gamma.reading 
+                        (plant_id, botanist_id, soil_moisture, temperature, last_watered, recording_taken) 
+                        VALUES (:plant, :botanist, :moisture, :temperature, :watered_at, :recording_at)""")
+                    conn.execute(insert_query, {
+                        "plant": plant_id,
+                        "botanist": botanist_id,
+                        "moisture": reading[2],
+                        "temperature": reading[3],
+                        "watered_at": reading[4],
+                        "recording_at": reading[5]
+                    })
+                    conn.commit()
+            except Exception:
+                continue
