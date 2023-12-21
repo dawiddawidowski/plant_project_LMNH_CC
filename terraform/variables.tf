@@ -1,11 +1,11 @@
-variable "db_user" {
+variable "DB_USER" {
     sensitive = true
 }
 
-variable "db_password" {
+variable "DB_PASSWORD" {
     sensitive = true
 }
 
-variable "db_host" {
+variable "DB_HOST" {
     sensitive = true
 }
