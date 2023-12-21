@@ -1,7 +1,8 @@
 import time
 from dotenv import load_dotenv
 
-from sample_extract import extract_changing_plant_details
+
+from multi_extract import extract_all_plant_details
 from transform_readings import clean_reading_data
 from load import get_database_connection, update_reading
 
@@ -10,7 +11,7 @@ def main(connection):
 
     # Extract
     start_extract_time = time.time()
-    plants_df = extract_changing_plant_details()
+    plants_df = extract_all_plant_details()
     end_extract_time = time.time()
     print(f"Extract time: {end_extract_time - start_extract_time}")
 
