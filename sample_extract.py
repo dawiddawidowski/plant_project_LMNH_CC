@@ -32,7 +32,7 @@ def extract_changing_plant_details():
             plant_dict["plant_name"] = plant_details.get("name")
             plants_list.append(plant_dict)
         except requests.exceptions.JSONDecodeError as errj:
-            print(plant_id, "Error, Plant not found" + errj)
+            print(plant_id, "Error, Plant not found" + repr(errj))
         except requests.exceptions.HTTPError as errh:
             print("An Http Error occurred:" + repr(errh))
         except requests.exceptions.ConnectionError as errc:
