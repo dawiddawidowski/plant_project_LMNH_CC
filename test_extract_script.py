@@ -4,9 +4,8 @@ and mocking for all functions in the script.
 """
 
 import io
-import sys
 import unittest
-from unittest.mock import patch, MagicMock, Mock
+from unittest.mock import patch, MagicMock
 
 import requests
 
@@ -62,60 +61,90 @@ class TestTransientDataFunction(unittest.TestCase):
     @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
     @patch('requests.get')
     def test_json_error_handling(self, mock_requests_get, mock_stdout):
-        """Tests that nothing is returned if the JSONDecodeError exception is raised."""
+        """
+        Tests that nothing is returned if the JSONDecodeError exception is raised
+        and that the expected console output is produced.
+        """
 
         mock_response = MagicMock()
         mock_response.json.side_effect = requests.exceptions.JSONDecodeError(
             "JSONDecodeError", "", 1)
         mock_requests_get.return_value = mock_response
         result = extract_changing_plant_details()
+        console_output = mock_stdout.getvalue()
+        print(console_output)
 
         self.assertEqual(len(result), 0)
+        assert "Error, Plant not found: " in console_output
 
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
     @patch('requests.get')
-    def test_http_error_handling(self, mock_requests_get):
-        """Tests that nothing is returned if the HTTPError exception is raised."""
+    def test_http_error_handling(self, mock_requests_get, mock_stdout):
+        """
+        Tests that nothing is returned if the HTTPError exception is raised
+        and that the expected console output is produced.
+        """
 
         mock_response = MagicMock()
         mock_response.json.side_effect = requests.exceptions.HTTPError
         mock_requests_get.return_value = mock_response
         result = extract_changing_plant_details()
-        print(result)
+        console_output = mock_stdout.getvalue()
+        print(console_output)
 
         self.assertEqual(len(result), 0)
+        assert "An Http Error occurred: " in console_output
 
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
     @patch('requests.get')
-    def test_connection_error_handling(self, mock_requests_get):
-        """Tests that nothing is returned if the ConnectionError exception is raised."""
+    def test_connection_error_handling(self, mock_requests_get, mock_stdout):
+        """
+        Tests that nothing is returned if the ConnectionError exception is raised
+        and that the expected console output is produced.
+        """
 
         mock_response = MagicMock()
         mock_response.json.side_effect = requests.exceptions.ConnectionError
         mock_requests_get.return_value = mock_response
         result = extract_changing_plant_details()
-        print(result)
+        console_output = mock_stdout.getvalue()
+        print(console_output)
 
         self.assertEqual(len(result), 0)
+        assert "An Error Connecting to the API occurred: " in console_output
 
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
     @patch('requests.get')
-    def test_timeout_error_handling(self, mock_requests_get):
-        """Tests that nothing is returned if the Timeout exception is raised."""
+    def test_timeout_error_handling(self, mock_requests_get, mock_stdout):
+        """
+        Tests that nothing is returned if the Timeout exception is raised
+        and that the expected console output is produced.
+        """
 
         mock_response = MagicMock()
         mock_response.json.side_effect = requests.exceptions.Timeout
         mock_requests_get.return_value = mock_response
         result = extract_changing_plant_details()
-        print(result)
+        console_output = mock_stdout.getvalue()
+        print(console_output)
 
         self.assertEqual(len(result), 0)
+        assert "A Timeout Error occurred: " in console_output
 
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
     @patch('requests.get')
-    def test_request_error_handling(self, mock_requests_get):
-        """Tests that nothing is returned if the RequestException is raised."""
+    def test_request_error_handling(self, mock_requests_get, mock_stdout):
+        """
+        Tests that nothing is returned if the RequestException is raised
+        and that the expected console output is produced.
+        """
 
         mock_response = MagicMock()
         mock_response.json.side_effect = requests.exceptions.RequestException
         mock_requests_get.return_value = mock_response
         result = extract_changing_plant_details()
-        print(result)
+        console_output = mock_stdout.getvalue()
+        print(console_output)
 
         self.assertEqual(len(result), 0)
+        assert "An Unknown Error occurred: " in console_output
