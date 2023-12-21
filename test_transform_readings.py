@@ -48,6 +48,107 @@ def fake_df():
     return pd.DataFrame(fake_plants)
 
 
+@pytest.fixture
+def fake_df_negative_soil_temp():
+
+    fake_plants = [{
+        "botanist": {
+            "email": "fake_email_1",
+            "name": "fake_name_1",
+            "phone": "fake_phone_1"
+        },
+        "last_watered": "Wed, 20 Dec 2023 14:10:54 GMT",
+        "plant_name": "fake_flower_1",
+        "plant_id": 1,
+        "error": None,
+        "recording_taken": "2023-12-21 10:20:34",
+        "soil_moisture": -33.95801666242039,
+        "temperature": -9.111493582669517
+    },
+        {
+        "botanist": {
+            "email": "fake_email_2",
+            "name": "fake_name_2",
+            "phone": "fake_phone_2"
+        },
+        "last_watered": "Wed, 20 Dec 2023 14:10:54 GMT",
+        "plant_name": "fake_flower_2",
+        "plant_id": 2,
+        "error": None,
+        "recording_taken": "2023-12-21 10:20:34",
+        "soil_moisture": 30.91501666242039,
+        "temperature": 9.150493582669517
+    }]
+
+    return pd.DataFrame(fake_plants)
+
+
+@pytest.fixture
+def fake_df_zero_soil_temp():
+
+    fake_plants = [{
+        "botanist": {
+            "email": "fake_email_1",
+            "name": "fake_name_1",
+            "phone": "fake_phone_1"
+        },
+        "last_watered": "Wed, 20 Dec 2023 14:10:54 GMT",
+        "plant_name": "fake_flower_1",
+        "plant_id": 1,
+        "error": None,
+        "recording_taken": "2023-12-21 10:20:34",
+        "soil_moisture": 0,
+        "temperature": 0
+    },
+        {
+        "botanist": {
+            "email": "fake_email_2",
+            "name": "fake_name_2",
+            "phone": "fake_phone_2"
+        },
+        "last_watered": "Wed, 20 Dec 2023 14:10:54 GMT",
+        "plant_name": "fake_flower_2",
+        "plant_id": 2,
+        "error": None,
+        "recording_taken": "2023-12-21 10:20:34",
+        "soil_moisture": 30.91501666242039,
+        "temperature": 9.150493582669517
+    }]
+
+
+@pytest.fixture
+def fake_df_high_soil_temp():
+
+    fake_plants = [{
+        "botanist": {
+            "email": "fake_email_1",
+            "name": "fake_name_1",
+            "phone": "fake_phone_1"
+        },
+        "last_watered": "Wed, 20 Dec 2023 14:10:54 GMT",
+        "plant_name": "fake_flower_1",
+        "plant_id": 1,
+        "error": None,
+        "recording_taken": "2023-12-21 10:20:34",
+        "soil_moisture": 101,
+        "temperature": 41
+    },
+        {
+        "botanist": {
+            "email": "fake_email_2",
+            "name": "fake_name_2",
+            "phone": "fake_phone_2"
+        },
+        "last_watered": "Wed, 20 Dec 2023 14:10:54 GMT",
+        "plant_name": "fake_flower_2",
+        "plant_id": 2,
+        "error": None,
+        "recording_taken": "2023-12-21 10:20:34",
+        "soil_moisture": 30.91501666242039,
+        "temperature": 9.150493582669517
+    }]
+
+
 class TestCleanReadingData():
     """Tests involving clean_reading_data()."""
 
@@ -109,3 +210,7 @@ class TestCleanReadingData():
         assert result_df.columns[7] == 'botanist_mobile'
         assert result_df.columns[8] == 'botanist_email'
         assert result_df.columns[9] == 'error'
+
+    def test_negative_soil_moisture():
+        """The negative soil_moisture column values should be Null."""
+        df_fake = pd.DataFrame()
