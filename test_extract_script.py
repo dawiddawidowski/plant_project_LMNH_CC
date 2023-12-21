@@ -4,14 +4,12 @@ and mocking for all functions in the script.
 """
 
 import io
-import sys
 import unittest
-from unittest.mock import patch, MagicMock, Mock
+from unittest.mock import patch, MagicMock
 
 import requests
 
-from sample_extract import (extract_plant_details, extract_changing_plant_details,
-                            write_to_csv)
+from sample_extract import (extract_changing_plant_details)
 
 sample_data = {
     "botanist": {
@@ -42,37 +40,6 @@ sample_data = {
 }
 
 
-class TestRawDataFunction(unittest.TestCase):
-    """Tests involving extract_plant_details()."""
-
-    @patch('requests.get')
-    def test_successfully_gets_info(self, mock_requests_get):
-        """Tests that essential plant details are successfully extracted."""
-
-        mock_response = MagicMock()
-        mock_response.json.return_value = sample_data
-
-        mock_requests_get.return_value = mock_response
-        result = extract_plant_details()
-
-        self.assertIn("plant_id", result[0])
-        self.assertIn("scientific_name", result[0])
-        self.assertIn("temperature", result[0])
-        self.assertIn("soil_moisture", result[0])
-
-    @patch('requests.get')
-    def test_json_error_handling(self, mock_requests_get):
-        """Tests that nothing is returned if the JSON exception is raised."""
-
-        mock_response = MagicMock()
-        mock_response.json.side_effect = requests.exceptions.JSONDecodeError(
-            "JSONDecodeError", "", 1)
-        mock_requests_get.return_value = mock_response
-        result = extract_plant_details()
-
-        self.assertEqual(len(result), 0)
-
-
 class TestTransientDataFunction(unittest.TestCase):
     """Tests involving extract_changing_plant_details()."""
 
@@ -86,118 +53,98 @@ class TestTransientDataFunction(unittest.TestCase):
         mock_requests_get.return_value = mock_response
         result = extract_changing_plant_details()
 
-        self.assertIn("plant_id", result[0])
-        self.assertIn("recording_taken", result[0])
-        self.assertIn("last_watered", result[0])
-        self.assertIn("temperature", result[0])
+        assert result["recording_taken"][0] == "2023-12-18 15:25:19"
+        assert result["recording_taken"].count() == 51
+        assert result["plant_id"].count() == 51
+        assert result["plant_id"][0] == 0
 
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
     @patch('requests.get')
-    def test_json_error_handling(self, mock_requests_get):
-        """Tests that nothing is returned if the JSON exception is raised."""
+    def test_json_error_handling(self, mock_requests_get, mock_stdout):
+        """
+        Tests that nothing is returned if the JSONDecodeError exception is raised
+        and that the expected console output is produced.
+        """
 
         mock_response = MagicMock()
         mock_response.json.side_effect = requests.exceptions.JSONDecodeError(
             "JSONDecodeError", "", 1)
         mock_requests_get.return_value = mock_response
         result = extract_changing_plant_details()
+        console_output = mock_stdout.getvalue()
+        print(console_output)
 
         self.assertEqual(len(result), 0)
+        assert "Error, Plant not found: " in console_output
 
-
-class TestWriteToCSVFunction(unittest.TestCase):
-
-    @patch('csv.DictWriter')
-    def test_write_to_csv(self, mock_csv_writer):
-        """csv.DictWriter().writerow should be called when the function is called."""
-
-        # Create fake data
-        data_sample = [{
-            "botanist": {
-                "name": "fake name"
-            },
-            "name": "fake_plant",
-            "plant_id": 1
-        }]
-
-        # Patch the built-in open function to prevent file creation
-        with patch('builtins.open', create=True):
-            write_to_csv(data_sample, "test_file.csv")
-
-            # Expected written data
-            expected_data = {
-                "botanist": {
-                    "name": "fake name"
-                },
-                "name": "fake_plant",
-                "plant_id": 1
-            }
-
-            # Assert writerow is called once with the passed in entry
-            mock_csv_writer().writerow.assert_called_once_with(
-                expected_data)
-
-    @patch('csv.DictWriter')
-    def test_write_to_csv_multiple(self, mock_csv_writer):
-        """csv.DictWriter().writerow should be called twice when the function is called."""
-
-        # Create fake data
-        data_sample = [{
-            "botanist": {
-                "name": "fake name"
-            },
-            "name": "fake_plant",
-            "plant_id": 1
-        },
-            {
-            "botanist": {
-                "name": "fake name2"
-            },
-            "name": "fake_plant2",
-            "plant_id": 2
-        }]
-
-        # Patch the built-in open function to prevent file creation
-        with patch('builtins.open', create=True):
-            write_to_csv(data_sample, "test_file.csv")
-
-            # Expected written data
-            expected_data = [
-                {
-                    "botanist": {
-                        "name": "fake name"
-                    },
-                    "name": "fake_plant",
-                    "plant_id": 1
-                },
-                {
-                    "botanist": {
-                        "name": "fake name2"
-                    },
-                    "name": "fake_plant2",
-                    "plant_id": 2
-                }
-            ]
-
-            # Assert writerow is called once with the passed in entry
-            mock_csv_writer().writerow.assert_has_calls([
-                unittest.mock.call(expected_data[0]),
-                unittest.mock.call(expected_data[1])
-            ])
-
-    @patch('csv.DictWriter')
-    def test_write_to_csv_empty(self, mock_csv_writer):
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
+    @patch('requests.get')
+    def test_http_error_handling(self, mock_requests_get, mock_stdout):
         """
-        csv.DictWriter().writerow should be not be called when
-        the function is called using an empty details_list.
+        Tests that nothing is returned if the HTTPError exception is raised
+        and that the expected console output is produced.
         """
 
-        # Create fake data
-        data_sample = []
-        # write_to_csv(data_sample, "test_file.csv")
+        mock_response = MagicMock()
+        mock_response.json.side_effect = requests.exceptions.HTTPError
+        mock_requests_get.return_value = mock_response
+        result = extract_changing_plant_details()
+        console_output = mock_stdout.getvalue()
+        print(console_output)
 
-        # Patch the built-in open function to actual file creation
-        with patch('builtins.open', create=True):
-            write_to_csv(data_sample, "test_file.csv")
+        self.assertEqual(len(result), 0)
+        assert "An Http Error occurred: " in console_output
 
-            # Assert writerow is called once with the passed in entry
-            mock_csv_writer().writerow.assert_not_called()
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
+    @patch('requests.get')
+    def test_connection_error_handling(self, mock_requests_get, mock_stdout):
+        """
+        Tests that nothing is returned if the ConnectionError exception is raised
+        and that the expected console output is produced.
+        """
+
+        mock_response = MagicMock()
+        mock_response.json.side_effect = requests.exceptions.ConnectionError
+        mock_requests_get.return_value = mock_response
+        result = extract_changing_plant_details()
+        console_output = mock_stdout.getvalue()
+        print(console_output)
+
+        self.assertEqual(len(result), 0)
+        assert "An Error Connecting to the API occurred: " in console_output
+
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
+    @patch('requests.get')
+    def test_timeout_error_handling(self, mock_requests_get, mock_stdout):
+        """
+        Tests that nothing is returned if the Timeout exception is raised
+        and that the expected console output is produced.
+        """
+
+        mock_response = MagicMock()
+        mock_response.json.side_effect = requests.exceptions.Timeout
+        mock_requests_get.return_value = mock_response
+        result = extract_changing_plant_details()
+        console_output = mock_stdout.getvalue()
+        print(console_output)
+
+        self.assertEqual(len(result), 0)
+        assert "A Timeout Error occurred: " in console_output
+
+    @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
+    @patch('requests.get')
+    def test_request_error_handling(self, mock_requests_get, mock_stdout):
+        """
+        Tests that nothing is returned if the RequestException is raised
+        and that the expected console output is produced.
+        """
+
+        mock_response = MagicMock()
+        mock_response.json.side_effect = requests.exceptions.RequestException
+        mock_requests_get.return_value = mock_response
+        result = extract_changing_plant_details()
+        console_output = mock_stdout.getvalue()
+        print(console_output)
+
+        self.assertEqual(len(result), 0)
+        assert "An Unknown Error occurred: " in console_output
