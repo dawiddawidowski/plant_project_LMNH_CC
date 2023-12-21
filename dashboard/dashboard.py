@@ -41,6 +41,17 @@ def load_s3_data(s3_client, bucket: str, key):
     return pd.read_csv(obj['Body'])
 
 
+def show_specific_plant_info(filtered_plant_data: pd.DataFrame, selected_plant: int, plant_filter: str, colour: str, timeframe: str) -> pd.DataFrame:
+    """Returns """
+
+    st.subheader(
+                f"{plant_filter} readings ({timeframe}) for plant {selected_plant}")
+    moisture_chart = alt.Chart(filtered_plant_data).mark_bar(color=colour).encode(
+        x='recording_taken',
+        y=plant_filter)
+    return st.altair_chart(moisture_chart, use_container_width=True)
+
+
 if __name__ == "__main__":
 
     load_dotenv()
@@ -83,34 +94,25 @@ if __name__ == "__main__":
             st.subheader("Raw data on readings in last 24 hours")
 
             st.write("ALL RAW DATA (PAST 24 HOURS)")
-            st.dataframe(reading_data)
+            readings_select = st.multiselect(
+            "Select plants to view", reading_data["plant_id"].unique(), default=reading_data["plant_id"].unique())
+            readings_data = reading_data[(reading_data['plant_id'].isin(readings_select))]
+            st.dataframe(readings_data)
 
-            # filtered
-            st.subheader(
-                f"All data in last 24 hours for a specific plant")
+            
 
             selected_plant = st.selectbox(
-                "Select to view one plant id", reading_data['plant_id'].unique())
+                "Select to view temperature and moisture for one plant", reading_data['plant_id'].unique())
 
-            filtered_plant_data = reading_data[reading_data['plant_id']
-                                               == selected_plant]
-            st.write(
-                f"Chosen plant ID: {selected_plant}")
-            st.dataframe(filtered_plant_data)
+            filtered_plant_data = reading_data[reading_data['plant_id']== selected_plant]
+            # st.write(
+            #     f"Chosen plant ID: {selected_plant}")
+            # st.dataframe(filtered_plant_data)
 
-            st.write(
-                f"Latest moisture readings over 24 hours for plant {selected_plant}")
-            moisture_chart = alt.Chart(filtered_plant_data).mark_bar(color='#C71585').encode(
-                x='recording_taken',
-                y='soil_moisture')
-            st.altair_chart(moisture_chart, use_container_width=True)
+            show_specific_plant_info(filtered_plant_data, selected_plant, 'soil_moisture', '#C71585', "Latest")
 
-            st.write(
-                f"Latest temperature readings over 24 hours for plant {selected_plant}")
-            temp_chart = alt.Chart(filtered_plant_data).mark_bar(color='#C71585').encode(
-                x='recording_taken',
-                y='temperature')
-            st.altair_chart(temp_chart, use_container_width=True)
+            show_specific_plant_info(filtered_plant_data, selected_plant, 'temperature', '#C71585', "Latest")
+
 
         # OLD DATA
         with cols[1]:
@@ -126,33 +128,27 @@ if __name__ == "__main__":
                 s3_client, 'c9-beetle-lmnh-plant-data', selected_key)
 
             st.write(f"ALL RAW DATA from {selected_key}")
-            st.dataframe(old_data)
+            readings_select = st.multiselect(
+            "Select plants to view", old_data["plant_id"].unique(), default=old_data["plant_id"].unique())
+            all_old_readings = reading_data[(reading_data['plant_id'].isin(readings_select))]
+            st.dataframe(all_old_readings)
+            # st.dataframe(old_data)
 
-            # filtered data
-            st.subheader(
-                f"All data for plant in {selected_key}")
+            # # filtered data
+            # st.subheader(
+            #     f"All data for plant in {selected_key}")
 
-            selected_plant_old = st.selectbox(
-                "Select to view one plant id", old_data['plant_id'].unique())
+            selected_plant_old = st.selectbox("Select to view one plant id", old_data['plant_id'].unique())
 
-            st.write(f"Chosen plant ID: {selected_plant_old}")
+            # st.write(f"Chosen plant ID: {selected_plant_old}")
 
-            filtered_plant_data_old = old_data[old_data['plant_id']
-                                               == selected_plant_old]
+            filtered_plant_data_old = old_data[old_data['plant_id'] == selected_plant_old]
 
-            st.dataframe(filtered_plant_data_old)
+            # st.dataframe(filtered_plant_data_old)
 
             # Graphing old data - filtered by plant id
-            st.write(
-                f"Moisture readings for plant {selected_plant_old} over time (old)")
-            moisture_chart = alt.Chart(filtered_plant_data_old).mark_bar(color='#8B00FF').encode(
-                x='recording_taken',
-                y='soil_moisture')
-            st.altair_chart(moisture_chart, use_container_width=True)
+            
+            show_specific_plant_info(filtered_plant_data_old, selected_plant_old, 'soil_moisture', '#8B00FF', "Over time")
 
-            st.write(
-                f"Temperature readings for plant {selected_plant_old} over time (old)")
-            temp_chart = alt.Chart(filtered_plant_data_old).mark_bar(color='#8B00FF').encode(
-                x='recording_taken',
-                y='temperature')
-            st.altair_chart(temp_chart, use_container_width=True)
+            show_specific_plant_info(filtered_plant_data_old, selected_plant_old, 'temperature', '#8B00FF', "Over time")
+

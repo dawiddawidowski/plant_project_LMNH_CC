@@ -1,0 +1,9 @@
+requests
+pylint
+pytest
+pytest-cov
+pandas
+python-dotenv
+sqlalchemy
+boto3
+pymssql
