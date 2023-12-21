@@ -9,8 +9,8 @@ import pytest
 from transform_readings import clean_reading_data
 
 
-@pytest.fixture
-def fake_df():
+@pytest.fixture(name="fake_df")
+def df():
     """Fixture for testing valid base cases."""
 
     fake_plants = [{
@@ -45,8 +45,8 @@ def fake_df():
     return pd.DataFrame(fake_plants)
 
 
-@pytest.fixture
-def fake_df_negative_soil_temp():
+@pytest.fixture(name="fake_df_negative_soil_temp")
+def df_negative_soil_temp():
     """Fixture for testing negative soil moisture and temperature edge case."""
 
     fake_plants = [{
@@ -81,8 +81,8 @@ def fake_df_negative_soil_temp():
     return pd.DataFrame(fake_plants)
 
 
-@pytest.fixture
-def fake_df_zero_soil_temp():
+@pytest.fixture(name="fake_df_zero_soil_temp")
+def df_zero_soil_temp():
     """Fixture for testing zero soil moisture and temperature edge case."""
 
     fake_plants = [{
@@ -117,8 +117,8 @@ def fake_df_zero_soil_temp():
     return pd.DataFrame(fake_plants)
 
 
-@pytest.fixture
-def fake_df_high_soil_temp():
+@pytest.fixture(name="fake_df_high_soil_temp")
+def df_high_soil_temp():
     """Fixture for testing excessively high soil moisture and temperature edge case."""
     fake_plants = [{
         "botanist": {
@@ -152,8 +152,8 @@ def fake_df_high_soil_temp():
     return pd.DataFrame(fake_plants)
 
 
-@pytest.fixture
-def fake_df_error():
+@pytest.fixture(name="fake_df_error")
+def df_error():
     """Fixture for testing error reading edge cases."""
 
     fake_plants = [{
