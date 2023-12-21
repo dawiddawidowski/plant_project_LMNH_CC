@@ -8,8 +8,6 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine, sql
 
 
-load_dotenv()
-
 def get_database_connection(config):
     """Returns a live database connection."""
     return create_engine(f"""mssql+pymssql://{config['DB_USER']}:{config['DB_PASSWORD']}@{config['DB_HOST']}/plants""")
@@ -41,24 +39,24 @@ def write_to_bucket(s3_client: boto3.client, data: pd.DataFrame) -> None:
     csv_format = datetime.now().strftime('%Y-%m-%d')
 
     csv_file_name = f'{csv_format}.csv'
-    buffer = data.to_csv(csv_file_name, index=False)
+    data.to_csv(csv_file_name, index=False)
 
     bucket_name = 'c9-beetle-lmnh-plant-data'
 
     s3_object_key = f'{current_date}/{csv_file_name}'
-
-    s3_client.put_object(Body=buffer, Bucket=bucket_name, Key=s3_object_key)
-    # s3_client.upload_file(csv_file_name, bucket_name, s3_object_key)
+    s3_client.upload_file(csv_file_name, bucket_name, s3_object_key)
 
 
-def lambda_handler(event, context):
-
-    aws_access_key_id = environ["AWS_ACCESS_KEY_ID"]
-    aws_secret_access_key = environ["AWS_SECRET_ACCESS_KEY"]
+def lambda_handler(event=None, context=None):
 
     db_conn = get_database_connection(environ)
     reading_data = get_todays_data(db_conn)
 
-    s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id,
-                            aws_secret_access_key=aws_secret_access_key)
+    s3 = boto3.client('s3', aws_access_key_id=environ["AWS_ACCESS_KEY_ID"],
+                            aws_secret_access_key=environ["AWS_SECRET_ACCESS_KEY"])
     write_to_bucket(s3, reading_data)
+
+
+if __name__ == "__main__":
+    load_dotenv()
+    lambda_handler()
