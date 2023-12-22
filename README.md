@@ -51,12 +51,14 @@ The `main.tf` file will create all infrastructure although to get the project up
 4. Install Python packages
 `pip3 install -r requirements.txt`
 5. Create an `.env` file containing the following:
+   
 For uploading data to the database:
 - `DB_NAME`
 - `DB_USER`
 - `DB_HOST`
 - `DB_PASSWORD`
 - `DB_PORT`
+  
 For connecting the the S3 bucket:
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
@@ -64,9 +66,9 @@ For connecting the the S3 bucket:
 
 ### Microsoft SQL Server
 
-- `brew install sqlcmd` to get the command-line tool
+- To install the command-tool: `brew install sqlcmd`
 - Activate a `venv` in the directory where the database will be accessed.
-- Run this sequence of shell commands to set things up:
+- Run the following sequence of shell commands to set things up:
 `brew install FreeTDS
 export CFLAGS="-I$(brew --prefix openssl)/include"
 export LDFLAGS="-L$(brew --prefix openssl)/lib -L/usr/local/opt/openssl/lib"
@@ -86,17 +88,17 @@ pip install sqlalchemy`
 1. To connect to the database schema, run in the terminal:
 `sqlcmd -S [host],[port] -U [user] -P [password];
 USE plants;
-GO;
-`
-2. Run the commands contained in the `seed_db.sql` script in the terminal to setup the tables in the database.
+GO;`
 
-3. To seed the database with static data, run in the terminal:
+3. Run the commands contained in the `seed_db.sql` script in the terminal to setup the tables in the database.
+
+4. To seed the database with static data, run in the terminal:
 `python3 load_static_data.py`.
 
 
 ### Dashboard
 
-Inside the dashboard folder contains the main dashboard.py script which uses the streamlit library to produce a page of visualisations giving insight into the health of each plant at the current time, as well as in the past. To run the dashboard locally, navigate to the dashboard directory and run the following command in the terminal: `streamlit run dashboard.py`.
+Inside the dashboard folder contains the main `dashboard.py` script which uses the streamlit library to create some visualisations giving insight into the health of each plant at the current time, as well as in the past. To run the dashboard locally, navigate to the dashboard directory and run the following command in the terminal: `streamlit run dashboard.py`.
 
 Alternatively, the dashboard is running on the cloud, and can be accessed from your browser using its public IP and specifying the inbound traffic port number: http://3.10.217.84:8501/
 
@@ -115,12 +117,13 @@ Extract:
   - Origin
   - Image
 
-- Transient values are added to the database, for each plant, every minute
+- Transient values are added to the database, for each plant, every minute.
 - Only data extracted within the last 24 hours is held in the database and used for the dashboard.
 - After 24 hours, the data is stored in an S3 bucket and the database is wiped.
 
 Transform:
 - Soil moisture and temperature have a precision of 2 decimal places.
-- Any rows which contain an error regardless of the type of error is removed from data
+- Any rows which contain an error regardless of the type of error is removed from data.
+- Records containing invalid soil moisture or temperature, for example negative values, are omitted.
 
 - All valid data will be stored in long-term S3 bucket and not omitted, due to potential change of requirements in the future.
