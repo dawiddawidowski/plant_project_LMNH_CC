@@ -72,7 +72,7 @@ pip install sqlalchemy`
 - `-i [filename] `on the end of the connection line to run a file
 - `-c [command]` on the end of the connection line to run a file
 
-### Seeding the database
+### Database
 
 1. To connect to the database schema, run in the terminal:
 `sqlcmd -S [host],[port] -U [user] -P [password];
