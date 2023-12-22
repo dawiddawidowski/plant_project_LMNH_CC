@@ -1,3 +1,4 @@
+"""Pipeline script which combines extract, transform, load"""
 import time
 from dotenv import load_dotenv
 
@@ -8,7 +9,7 @@ from load import get_database_connection, update_reading
 
 
 def main(connection):
-
+    """Calls the pipeline functions, ensuring it is called every 60 seconds"""
     # Extract
     start_extract_time = time.time()
     plants_df = extract_all_plant_details()
@@ -42,5 +43,4 @@ if __name__ == "__main__":
         print(f"Total time: {elapsed_time} secs")
         if elapsed_time > 60:
             continue
-        else:
-            time.sleep(60 - elapsed_time)
+        time.sleep(60 - elapsed_time)

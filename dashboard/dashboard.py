@@ -2,16 +2,12 @@
 from os import environ
 from datetime import datetime
 
-from datetime import datetime
-from os import environ
-
 import pandas as pd
 import boto3
 import streamlit as st
 import altair as alt
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-import pandas as pd
 
 
 CUSTOM_BACKGROUND = """

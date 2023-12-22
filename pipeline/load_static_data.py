@@ -1,9 +1,8 @@
 """Seeds the database with initial static data"""
-
-import os
 from os import environ
-import requests
 import csv
+
+import requests
 import pandas as pd
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, MetaData, Table
@@ -20,8 +19,7 @@ MAX_PLANT_NUM = 51
 def get_db_connection():
     """Connects to the remote database"""
 
-    engine = create_engine(
-        f"mssql+pymssql://{environ['DB_USER']}:{environ['DB_PASSWORD']}@{environ['DB_HOST']}/plants")
+    engine = create_engine(DATABASE_URI)
     conn = engine.connect()
 
     return conn
@@ -188,33 +186,6 @@ def populate_plant_table(table: str, column_list: list[str], data: str) -> None:
 """
 
 
-# def find_plant_data(data: list[dict]) -> list[list]:
-#     """
-#     Takes in all raw plant data and finds info for
-#     plant table
-#     """
-#     all_plant_data = []
-#     for datum in data:
-#         # without plant ids
-#         current_plant_data = []
-#         current_plant_data.append(datum.get('name', ''))
-#         current_plant_data.append(datum.get('scientific_name', ''))
-#         # need to crack into this
-#         current_plant_data.append(datum.get('origin_location', ''))
-#         current_plant_data.append(datum.get('image', ''))
-
-# [TODO] Address difficulty with linking origin to plant in database
-
-# def find_botanist_data(data: list[dict]) -> list[list]:
-#     """
-#     Takes in all raw plant data and finds info for
-#     botanist table
-#     """
-#     # all_botanist_data = []
-#     # for datum in data:
-#     pass
-
-
 def license_id_in_image_table() -> None:
     '''Inserts all license_ids into the image table.'''
 
@@ -251,7 +222,8 @@ def license_id_in_image_table() -> None:
         for pair in new_pairs:
 
             query = text(
-                '''update s_gamma.image set license_id = :new_value where medium_url = :condition_value''')
+                '''update s_gamma.image set license_id = :new_value 
+                where medium_url = :condition_value''')
             params = {'new_value': pair[0], 'condition_value': pair[1]}
             res = conn.execute(query, params)
             conn.commit()
@@ -293,7 +265,8 @@ def image_id_in_plant_table() -> None:
                 new_pairs.append([row[0], pair[0]])
         for pair in new_pairs:
             query = text(
-                '''update s_gamma.plant set image_id = :new_value where plant_name = :condition_value''')
+                '''update s_gamma.plant set image_id = :new_value 
+                where plant_name = :condition_value''')
             params = {'new_value': pair[0], 'condition_value': pair[1]}
             res = conn.execute(query, params)
             conn.commit()
@@ -327,7 +300,8 @@ def origin_id_in_plant_table() -> None:
 
     with conn:
         query = text(
-            '''select origin_id from s_gamma.origin where latitude = :value1 and longitude = :value2''')
+            '''select origin_id from s_gamma.origin 
+            where latitude = :value1 and longitude = :value2''')
         for triple in triples:
             res = conn.execute(
                 query, {'value1': triple[1], 'value2': triple[2]})
@@ -337,7 +311,8 @@ def origin_id_in_plant_table() -> None:
         for pair in new_pairs:
 
             query = text(
-                '''update s_gamma.plant set origin_id = :new_value where plant_name = :condition_value''')
+                '''update s_gamma.plant set origin_id = :new_value
+                where plant_name = :condition_value''')
             params = {'new_value': pair[0], 'condition_value': pair[1]}
             res = conn.execute(query, params)
             conn.commit()
@@ -361,9 +336,6 @@ def main():
 
     license_id_in_image_table()
 
-    # populate_plant_table(
-    #     'plant', ['plant_name', 'scientific_name'], 'master_plant.csv')
-
     image_id_in_plant_table()
 
     origin_id_in_plant_table()
@@ -372,6 +344,4 @@ def main():
 if __name__ == "__main__":
 
     load_dotenv()
-    # write_to_csv(get_raw_data(), 'master_plant.csv')
     main()
-    # print(image_id_in_plant_table())
