@@ -1,5 +1,11 @@
 # LNHM Plant Sensor Project
-This stores the group project work for the plant project in W12.
+This project contains an ETL pipeline for the Liverpool National History Museum (LNHM) to monitor the health of the plants over time. Data is extracted from an API streaming live readings from an array of sensors setup to monitor the health of the plants.
+
+The project deliverables are:
+- A full data pipeline, hosted in the cloud.
+- A short term database solution that can store the data for the past 24 hours.
+- A long term storage solution for all data older than 24 hours.
+- A dashboard containing graphs of the latest temperature and moisture readings for every plant.
 
 ## Architecture Diagram
 
