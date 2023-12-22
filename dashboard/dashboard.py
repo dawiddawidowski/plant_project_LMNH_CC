@@ -71,8 +71,16 @@ def show_specific_plant_info(
     return st.altair_chart(moisture_chart, use_container_width=True)
 
 
-def create_full_reading_table():
-    pass
+def create_full_reading_table(all_plant_data, timeframe):
+    """Returns a full reading table within timeframe, allowing user to filter plants to see"""
+
+    st.write(f"ALL RAW DATA from {timeframe}")
+    unique_plant_numbers = all_plant_data["plant_id"].unique()
+    selected_plants = st.multiselect(
+    "Select plants to view", unique_plant_numbers, default=unique_plant_numbers)
+    readings_data = all_plant_data[(all_plant_data['plant_id'].isin(selected_plants))]
+    return st.dataframe(readings_data)
+
 
 if __name__ == "__main__":
 
@@ -98,14 +106,11 @@ if __name__ == "__main__":
             st.write(f"Date: {CURRENT_DATE}")
             st.subheader("Raw data on readings in last 24 hours")
 
-            st.write("ALL RAW DATA (PAST 24 HOURS)")
-            readings_select = st.multiselect(
-            "Select plants to view", reading_data["plant_id"].unique(), default=reading_data["plant_id"].unique())
-            readings_data = reading_data[(reading_data['plant_id'].isin(readings_select))]
-            st.dataframe(readings_data)
+            create_full_reading_table(reading_data, "PAST 24 HOURS")
 
             selected_plant = st.selectbox(
-                "Select to view temperature and moisture for one plant", reading_data['plant_id'].unique())
+                "Select to view temperature and moisture for one plant", 
+                reading_data['plant_id'].unique())
             filtered_plant_data = reading_data[reading_data['plant_id']== selected_plant]
 
             show_specific_plant_info(filtered_plant_data,
@@ -133,13 +138,10 @@ if __name__ == "__main__":
             old_data = load_s3_data(
                 s3, BUCKET_NAME, selected_key)
 
-            st.write(f"ALL RAW DATA from {selected_key}")
-            readings_select = st.multiselect(
-            "Select plants to view", old_data["plant_id"].unique(), default=old_data["plant_id"].unique())
-            all_old_readings = reading_data[(reading_data['plant_id'].isin(readings_select))]
-            st.dataframe(all_old_readings)
+            create_full_reading_table(old_data, selected_key)
 
-            selected_plant_old = st.selectbox("Select to view one plant id", old_data['plant_id'].unique())
+            selected_plant_old = st.selectbox("Select to view one plant id",
+                                               old_data['plant_id'].unique())
             filtered_plant_data_old = old_data[old_data['plant_id'] == selected_plant_old]
 
             show_specific_plant_info(
