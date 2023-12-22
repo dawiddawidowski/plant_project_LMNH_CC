@@ -1,5 +1,13 @@
 # LNHM Plant Sensor Project
-This stores the group project work for the plant project in W12.
+
+## Project Description
+This project contains a Python ETL pipeline for the Liverpool National History Museum (LNHM) to monitor the health of the plants over time. Data is extracted from an API streaming live readings from an array of sensors setup to monitor the health of the plants.
+
+The project deliverables are:
+- A full data pipeline, hosted in the cloud.
+- A short term database solution that can store the data for the past 24 hours.
+- A long term storage solution for all data older than 24 hours.
+- A dashboard containing graphs of the latest temperature and moisture readings for every plant.
 
 ## Architecture Diagram
 
@@ -22,6 +30,59 @@ The static data from the API is seeded into the database tables upon their creat
 This approach increases the speed of pipeline by allowing it to only process the dynamic data to insert into the reading table.
 
 ![Alt text](erd_diagram.png)
+
+## Setup
+
+### Pipeline
+
+1. Navigate to the directory you wish to create a repository
+2. Activate a `venv`
+3. Clone the repo
+`git clone https://github.com/tadawson23/plant_project_LMNH_CC.git`
+4. Install Python packages
+`pip3 install -r requirements.txt`
+5. Create an `.env` file containing the following:
+For uploading data to the database:
+- `DB_NAME`
+- `DB_USER`
+- `DB_HOST`
+- `DB_PASSWORD`
+- `DB_PORT`
+For connecting the the S3 bucket:
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+
+
+### Microsoft SQL Server
+
+- `brew install sqlcmd` to get the command-line tool
+- Activate a `venv` in the directory where the database will be accessed.
+- Run this sequence of shell commands to set things up:
+`brew install FreeTDS
+export CFLAGS="-I$(brew --prefix openssl)/include"
+export LDFLAGS="-L$(brew --prefix openssl)/lib -L/usr/local/opt/openssl/lib"
+export CPPFLAGS="-I$(brew --prefix openssl)/include"
+pip install --pre --no-binary :all: pymssql --no-cache
+pip install sqlalchemy`
+
+#### Usage - sqlcmd
+- `sqlcmd -S [host],[port] -U [user] -P [password]` is the basic connection line
+- `exit` to quit the interpreter
+- Add `go` after every command to actually run them
+- `-i [filename] `on the end of the connection line to run a file
+- `-c [command]` on the end of the connection line to run a file
+
+### Database
+
+1. To connect to the database schema, run in the terminal:
+`sqlcmd -S [host],[port] -U [user] -P [password];
+USE plants;
+GO;
+`
+2. Run the commands contained in the `seed_db.sql` script in the terminal to setup the tables in the database.
+
+2. To seed the database with static data, run in the terminal:
+` python3 load_static_data`
 
 ## Assumptions Log
 

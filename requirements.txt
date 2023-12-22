@@ -6,4 +6,6 @@ pandas
 python-dotenv
 sqlalchemy
 boto3
-pymssql
+streamlit
+s3fs
+altair
