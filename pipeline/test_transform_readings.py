@@ -6,7 +6,7 @@ and mocking for all functions in the script.
 import pandas as pd
 import pytest
 
-from pipeline.transform_readings import clean_reading_data
+from transform_readings import clean_reading_data
 
 
 @pytest.fixture(name="fake_df")
