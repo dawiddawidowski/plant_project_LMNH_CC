@@ -39,11 +39,7 @@ def get_db_connection():
     """Connects to the RDS plants database"""
 
     return create_engine(
-        f"""mssql+pymssql://{environ['DB_USER']}
-        :{environ['DB_PASSWORD']}@{environ['DB_HOST']}/plants""").connect()
-
-
-
+        f"""mssql+pymssql://{environ['DB_USER']}:{environ['DB_PASSWORD']}@{environ['DB_HOST']}/plants""").connect()
 
 
 def get_object_keys(client, bucket: str, s3_folder: str) -> list[str]:
@@ -56,7 +52,6 @@ def get_object_keys(client, bucket: str, s3_folder: str) -> list[str]:
         Bucket=bucket, Prefix=s3_folder)["Contents"]
 
     return [o["Key"] for o in contents]
-
 
 
 def load_s3_data(s3_client: boto3.client, bucket: str, key):
@@ -75,8 +70,8 @@ def show_specific_plant_info(
     """Returns plant info for a single plant based on specific filter provided"""
 
     st.subheader(
-                f"{plant_filter} readings ({timeframe}) for plant {chosen_plant}")
-    moisture_chart = alt.Chart(plant_data).mark_bar(color=colour).encode(   
+        f"{plant_filter} readings ({timeframe}) for plant {chosen_plant}")
+    moisture_chart = alt.Chart(plant_data).mark_bar(color=colour).encode(
         x='recording_taken',
         y=plant_filter)
     return st.altair_chart(moisture_chart, use_container_width=True)
@@ -88,8 +83,9 @@ def create_full_reading_table(all_plant_data, timeframe):
     st.write(f"ALL RAW DATA from {timeframe}")
     unique_plant_numbers = all_plant_data["plant_id"].unique()
     selected_plants = st.multiselect(
-    "Select plants to view", unique_plant_numbers, default=unique_plant_numbers)
-    readings_data = all_plant_data[(all_plant_data['plant_id'].isin(selected_plants))]
+        "Select plants to view", unique_plant_numbers, default=unique_plant_numbers)
+    readings_data = all_plant_data[(
+        all_plant_data['plant_id'].isin(selected_plants))]
     return st.dataframe(readings_data)
 
 
@@ -98,8 +94,8 @@ if __name__ == "__main__":
     load_dotenv()
     conn = get_db_connection()
     s3 = boto3.client("s3",
-                             aws_access_key_id=environ["AWS_ACCESS_KEY_ID"],
-                             aws_secret_access_key=environ["AWS_SECRET_ACCESS_KEY"])
+                      aws_access_key_id=environ["AWS_ACCESS_KEY_ID"],
+                      aws_secret_access_key=environ["AWS_SECRET_ACCESS_KEY"])
 
     with conn:
         reading_data = pd.read_sql(
@@ -151,8 +147,9 @@ if __name__ == "__main__":
                 s3, BUCKET_NAME, selected_key)
             create_full_reading_table(old_data, selected_key)
             selected_plant_old = st.selectbox("Select to view one plant id",
-                                               old_data['plant_id'].unique())
-            filtered_plant_data_old = old_data[old_data['plant_id'] == selected_plant_old]
+                                              old_data['plant_id'].unique())
+            filtered_plant_data_old = old_data[old_data['plant_id']
+                                               == selected_plant_old]
             show_specific_plant_info(
                 filtered_plant_data_old,
                 selected_plant_old,
@@ -162,8 +159,8 @@ if __name__ == "__main__":
             )
             show_specific_plant_info(
                 filtered_plant_data_old,
-                 selected_plant_old,
-                 'temperature',
-                 '#8B00FF',
-                 "Over time"
+                selected_plant_old,
+                'temperature',
+                '#8B00FF',
+                "Over time"
             )
