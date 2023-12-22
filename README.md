@@ -66,7 +66,7 @@ pip install --pre --no-binary :all: pymssql --no-cache
 pip install sqlalchemy`
 
 #### Usage - sqlcmd
-- `sqlcmd -S [host],[port] -U [user] -P [password] `is the basic connection line
+- `sqlcmd -S [host],[port] -U [user] -P [password]` is the basic connection line
 - `exit` to quit the interpreter
 - Add `go` after every command to actually run them
 - `-i [filename] `on the end of the connection line to run a file
@@ -74,7 +74,15 @@ pip install sqlalchemy`
 
 ### Seeding the database
 
-1.
+1. To connect to the database schema, run in the terminal:
+`sqlcmd -S [host],[port] -U [user] -P [password];
+USE plants;
+GO;
+`
+2. Run the commands contained in the `seed_db.sql` script in the terminal to setup the tables in the database.
+
+2. To seed the database with static data, run in the terminal:
+` python3 load_static_data`
 
 ## Assumptions Log
 
