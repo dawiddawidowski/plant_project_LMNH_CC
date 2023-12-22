@@ -36,9 +36,9 @@ This approach increases the speed of pipeline by allowing it to only process the
 
 ### Terraform
 
-Contained inside the terraform folder are two files: main.tf and variables.tf, the first contains all terraform code used to create all aws cloud infrastructure utilised, the latter contains the names of variables used in creating the infrastructure. The variables are sensitive so in re-creating this project, an additional file named terraform.tfvars should be created containing the specific values for these variables. 
+Contained inside the terraform folder are two files: `main.tf` and `variables.tf`, the first contains all terraform code used to create all aws cloud infrastructure utilised, the latter contains the names of variables used in creating the infrastructure. The variables are sensitive so in re-creating this project, an additional file named `terraform.tfvars` should be created containing the specific values for these variables. Do not share the information stored in this file. 
 
-The main.tf file will create all infrastructure although to get the project up and running from this, you will need to upload the required Docker images to ECR repositories. Following this, all functionality should work as intended.
+The `main.tf` file will create all infrastructure although to get the project up and running from this, you will need to upload the required Docker images to ECR repositories. Following this, all functionality should work as intended.
 
 ## Setup
 
@@ -90,8 +90,17 @@ GO;
 `
 2. Run the commands contained in the `seed_db.sql` script in the terminal to setup the tables in the database.
 
-2. To seed the database with static data, run in the terminal:
-` python3 load_static_data`
+3. To seed the database with static data, run in the terminal:
+`python3 load_static_data.py`.
+
+
+### Dashboard
+
+Inside the dashboard folder contains the main dashboard.py script which uses the streamlit library to produce a page of visualisations giving insight into the health of each plant at the current time, as well as in the past. To run the dashboard locally, navigate to the dashboard directory and run the following command in the terminal: `streamlit run dashboard.py`.
+
+Alternatively, the dashboard is running on the cloud, and can be accessed from your browser using its public IP and specifying the inbound traffic port number: http://3.10.217.84:8501/
+
+The dashboard lets users see raw data collected in any given day, filtering by each plant, as well as visualisations giving insight into the soil moisture and temperature readings for each plant, again, from either past or present data. 
 
 ## Assumptions Log
 
