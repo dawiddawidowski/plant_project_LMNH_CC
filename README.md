@@ -59,7 +59,7 @@ For uploading data to the database:
 - `DB_PASSWORD`
 - `DB_PORT`
   
-For connecting the the S3 bucket:
+For connecting to the S3 bucket:
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
 
