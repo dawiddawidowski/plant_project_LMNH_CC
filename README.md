@@ -1,4 +1,6 @@
 # LNHM Plant Sensor Project
+
+## Project Description
 This project contains an ETL pipeline for the Liverpool National History Museum (LNHM) to monitor the health of the plants over time. Data is extracted from an API streaming live readings from an array of sensors setup to monitor the health of the plants.
 
 The project deliverables are:
@@ -33,7 +35,7 @@ This approach increases the speed of pipeline by allowing it to only process the
 ### Microsoft SQL Server
 
 - `brew install sqlcmd` to get the command-line tool
-- Activate a `venv`
+- Activate a `venv` in the directory where the database will be accessed.
 - Run this sequence of shell commands to set things up:
 `brew install FreeTDS
 export CFLAGS="-I$(brew --prefix openssl)/include"
@@ -50,7 +52,7 @@ pip install sqlalchemy`
 - '-i [filename]' on the end of the connection line to run a file
 - '-c [command]' on the end of the connection line to run a file
 
-###
+### Pipeline
 
 ## Assumptions Log
 
