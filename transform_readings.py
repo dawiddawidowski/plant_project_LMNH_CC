@@ -12,17 +12,9 @@ MAX_TEMPERATURE = 40
 MAX_SOIL_MOISTURE = 100
 
 
-def get_field(row: str | None, field: str, value_type=str) -> str | None:
-    '''Helper function to get a license or image field from a row in the DataFrame.'''
-    try:
-        return value_type(eval(row).get(field))
-    except TypeError:
-        return None
-
-
 def clean_reading_data(df: pd.DataFrame) -> pd.DataFrame:
     '''Loads in the extracted data in the form of a pandas DataFrame,
-    cleans the data and returns the new dataset as a pandas DataFrame. 
+    cleans the data and returns the new dataset as a pandas DataFrame.
     Columns in the DataFrame are grouped by which database table they are in.'''
 
     # Convert the date format
