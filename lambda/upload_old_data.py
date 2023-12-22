@@ -10,6 +10,7 @@ import s3fs
 
 load_dotenv()
 
+
 def get_database_connection(config):
     """Returns a live database connection."""
     return create_engine(f"""mssql+pymssql://{config['DB_USER']}:{config['DB_PASSWORD']}@{config['DB_HOST']}/plants""")
@@ -41,11 +42,11 @@ def write_to_bucket(s3_client: boto3.client, data: pd.DataFrame) -> None:
     csv_format = datetime.now().strftime('%Y-%m-%d')
 
     csv_file_name = f'{csv_format}.csv'
-    
-    bucket_name = 'c9-beetle-lmnh-plant-data'
+
+    bucket_name = 'c9-beetle-lmnh-plant-data-terraform'
 
     s3 = s3fs.S3FileSystem(anon=False)
-    with s3.open(f'{bucket_name}/{current_date}/{csv_file_name}','w') as f:
+    with s3.open(f'{bucket_name}/{current_date}/{csv_file_name}', 'w') as f:
         data.to_csv(f, index=False)
 
 
@@ -55,6 +56,6 @@ def lambda_handler(event=None, context=None):
     reading_data = get_todays_data(db_conn)
 
     s3 = boto3.client('s3', aws_access_key_id=environ["AKI"],
-                            aws_secret_access_key=environ["SAK"])
+                      aws_secret_access_key=environ["SAK"])
     write_to_bucket(s3, reading_data)
     print("File uploaded")

@@ -15,6 +15,7 @@ data "aws_ecs_cluster" "existing_cluster" {
 # My account for reference
 data "aws_caller_identity" "current" {}
 
+# Logging messages
 resource "aws_cloudwatch_log_group" "ecs_log_group" {
   name = "beetle-log"
 }
@@ -80,3 +81,103 @@ resource "aws_ecs_service" "pipeline_service" {
   }
   desired_count = 1  
 }
+
+# ECR Repository for Lambda Docker image
+resource "aws_ecr_repository" "lambda_ecr_repo" {
+  name = "c9-beetle-lambda-repo-terraform"
+}
+
+# IAM role to execute the Lambda function
+resource "aws_iam_role" "lambda_role" {
+  name = "c9-beetle-lambda-role-terraform"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Action = "sts:AssumeRole",
+      Effect = "Allow",
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      },
+    }]
+  })
+}
+
+# Policies to attach to Lambda role
+resource "aws_iam_role_policy_attachment" "lambda_exec_policy_attachment" {
+  role = aws_iam_role.lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSLambdaExecute"
+}
+
+resource "aws_iam_role_policy_attachment" "s3_full_access_policy_attachment" {
+  role = aws_iam_role.lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "rds_full_access_policy_attachment" {
+  role = aws_iam_role.lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonRDSFullAccess"
+}
+
+
+# S3 bucket to store csv files containing database data
+resource "aws_s3_bucket" "s3_bucket_terraform" {
+  bucket = "c9-beetle-lmnh-plant-data-terraform"
+}
+
+# Lambda function to move database data into s3
+resource "aws_lambda_function" "my_lambda" {
+  function_name = "c9-beetle-lambda-terraform"
+  role = aws_iam_role.lambda_role.arn
+
+  # Image currently in existing non-terraform ECR repository
+  image_uri = "129033205317.dkr.ecr.eu-west-2.amazonaws.com/c9-beetle-lambda-repo-terraform:latest"
+  package_type = "Image"
+  memory_size = 512
+  timeout = 30
+
+  environment {
+    variables = {
+      DB_HOST = var.DB_HOST
+      DB_PASSWORD = var.DB_PASSWORD
+      DB_USER = var.DB_USER
+      DB_SCHEMA = var.DB_SCHEMA
+      DB_NAME = var.DB_NAME
+      DB_PORT = var.DB_PORT
+      AKI = var.AKI
+      SAK = var.SAK
+
+    }
+  }
+}
+
+# Displays name of Lambda function once Terraform applies the configuration
+output "c9-beetle-lambda-terraform" {
+  value = aws_lambda_function.my_lambda.function_name
+}
+
+
+# Event rule for each day
+resource "aws_cloudwatch_event_rule" "daily_schedule" {
+  name = "c9-beetle-daily-lambda-schedule-terraform"
+  description = "Targets lambda function moving data to s3 once a day."
+  schedule_expression = "cron(0 0 * * ? *)"
+}
+
+# Associate above rule with the Lambda
+resource "aws_cloudwatch_event_target" "lambda_target" {
+  rule = aws_cloudwatch_event_rule.daily_schedule.name
+  target_id = "TargetFunction"
+  arn = aws_lambda_function.my_lambda.arn
+}
+
+
+# Give permission for EventBridge to invoke Lambda
+resource "aws_lambda_permission" "allow_cloudwatch_to_call_lambda" {
+  statement_id = "AllowExecutionFromCloudWatch"
+  action = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.my_lambda.function_name
+  principal = "events.amazonaws.com"
+  source_arn = aws_cloudwatch_event_rule.daily_schedule.arn
+}
+

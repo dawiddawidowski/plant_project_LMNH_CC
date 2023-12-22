@@ -9,6 +9,7 @@ from sqlalchemy import sql
 
 from load import get_database_connection
 
+
 def get_todays_data(connection) -> pd.DataFrame:
     """Returns the entries from reading table for current day"""
     with connection.connect() as conn:
@@ -37,7 +38,7 @@ def write_to_bucket(s3_client: boto3.client, data: pd.DataFrame) -> None:
     csv_file_name = f'{csv_format}.csv'
     data.to_csv(csv_file_name, index=False)
 
-    bucket_name = 'c9-beetle-lmnh-plant-data'
+    bucket_name = 'c9-beetle-lmnh-plant-data-terraform'
 
     s3_object_key = f'{current_date}/{csv_file_name}'
 
@@ -51,8 +52,7 @@ if __name__ == "__main__":
     aws_secret_access_key = environ["AWS_SECRET_ACCESS_KEY"]
 
     s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id,
-                            aws_secret_access_key=aws_secret_access_key)
-
+                      aws_secret_access_key=aws_secret_access_key)
 
     db_conn = get_database_connection(environ)
 
