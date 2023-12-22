@@ -1,0 +1,12 @@
+requests
+pylint
+pytest
+pytest-cov
+pandas
+python-dotenv
+sqlalchemy
+boto3
+streamlit
+s3fs
+altair
+pymssql

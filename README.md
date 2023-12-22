@@ -10,7 +10,7 @@ The project deliverables are:
 - A dashboard containing graphs of the latest temperature and moisture readings for every plant.
 
 
-## Architecture 
+## Architecture
 
 ### Architecture Diagram
 
