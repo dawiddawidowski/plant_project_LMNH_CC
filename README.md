@@ -1,7 +1,7 @@
 # LNHM Plant Sensor Project
 
 ## Project Description
-This project contains an ETL pipeline for the Liverpool National History Museum (LNHM) to monitor the health of the plants over time. Data is extracted from an API streaming live readings from an array of sensors setup to monitor the health of the plants.
+This project contains a Python ETL pipeline for the Liverpool National History Museum (LNHM) to monitor the health of the plants over time. Data is extracted from an API streaming live readings from an array of sensors setup to monitor the health of the plants.
 
 The project deliverables are:
 - A full data pipeline, hosted in the cloud.
@@ -32,6 +32,27 @@ This approach increases the speed of pipeline by allowing it to only process the
 ![Alt text](erd_diagram.png)
 
 ## Setup
+
+### Pipeline
+
+1. Navigate to the directory you wish to create a repository
+2. Activate a `venv`
+3. Clone the repo
+`git clone https://github.com/tadawson23/plant_project_LMNH_CC.git`
+4. Install Python packages
+`pip3 install -r requirements.txt`
+5. Create an `.env` file containing the following:
+For uploading data to the database:
+- `DB_NAME`
+- `DB_USER`
+- `DB_HOST`
+- `DB_PASSWORD`
+- `DB_PORT`
+For connecting the the S3 bucket:
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+
+
 ### Microsoft SQL Server
 
 - `brew install sqlcmd` to get the command-line tool
@@ -44,15 +65,16 @@ export CPPFLAGS="-I$(brew --prefix openssl)/include"
 pip install --pre --no-binary :all: pymssql --no-cache
 pip install sqlalchemy`
 
-#### Usage
-##### sqlcmd
-- 'sqlcmd -S [host],[port] -U [user] -P [password]' is the basic connection line
-- 'exit' to quit the interpreter
-- Add 'go' after every command to actually run them
-- '-i [filename]' on the end of the connection line to run a file
-- '-c [command]' on the end of the connection line to run a file
+#### Usage - sqlcmd
+- `sqlcmd -S [host],[port] -U [user] -P [password] `is the basic connection line
+- `exit` to quit the interpreter
+- Add `go` after every command to actually run them
+- `-i [filename] `on the end of the connection line to run a file
+- `-c [command]` on the end of the connection line to run a file
 
-### Pipeline
+### Seeding the database
+
+1.
 
 ## Assumptions Log
 
