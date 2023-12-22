@@ -9,3 +9,4 @@ boto3
 streamlit
 s3fs
 altair
+pymssql
