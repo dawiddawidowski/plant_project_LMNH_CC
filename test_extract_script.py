@@ -1,6 +1,5 @@
 """
-Testing suite for the extract script, including base and edge cases
-and mocking for all functions in the script.
+Testing suite for the extract script, including base and edge cases in the script.
 """
 
 import io
