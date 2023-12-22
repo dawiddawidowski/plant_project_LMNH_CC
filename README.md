@@ -9,7 +9,10 @@ The project deliverables are:
 - A long term storage solution for all data older than 24 hours.
 - A dashboard containing graphs of the latest temperature and moisture readings for every plant.
 
-## Architecture Diagram
+
+## Architecture 
+
+### Architecture Diagram
 
 The main ETL pipeline Python script extracts data from the plant API, cleans the data, and loads the data into the database. The script is Dockerised and ran as a continuous service on AWS ECS. The aim here is to monitor the plant health as close to every minute as possible. If one iteration of passing data through the pipeline takes longer than one minute (largely due to response times in communicating with the API), then the next iteration begins immediately. Otherwise, if the current iteration takes less than one minute to complete, the next iteration begins after one minute has passed from the start of the current iteration.
 
@@ -19,7 +22,7 @@ In addition to the pipeline, the Python script running a Streamlit dashboard is 
 
 ![Architecture Diagram](architecture_diagram.png)
 
-## Entity Relationship Diagram (ERD)
+### Entity Relationship Diagram (ERD)
 
 The relational database used for short-term storage is in 3rd Normal Form, as the data extracted from the API is structured and there is a clear but complex relationship between the entities.
 
@@ -30,6 +33,12 @@ The static data from the API is seeded into the database tables upon their creat
 This approach increases the speed of pipeline by allowing it to only process the dynamic data to insert into the reading table.
 
 ![Alt text](erd_diagram.png)
+
+### Terraform
+
+Contained inside the terraform folder are two files: main.tf and variables.tf, the first contains all terraform code used to create all aws cloud infrastructure utilised, the latter contains the names of variables used in creating the infrastructure. The variables are sensitive so in re-creating this project, an additional file named terraform.tfvars should be created containing the specific values for these variables. 
+
+The main.tf file will create all infrastructure although to get the project up and running from this, you will need to upload the required Docker images to ECR repositories. Following this, all functionality should work as intended.
 
 ## Setup
 
