@@ -14,8 +14,6 @@ from sqlalchemy import create_engine
 import pandas as pd
 
 
-CURRENT_DATE = datetime.now().strftime("%Y-%m-%d")
-CURRENT_YEAR = str(datetime.now().year)
 CUSTOM_BACKGROUND = """
     <style>
     body {
@@ -32,7 +30,7 @@ CUSTOM_BACKGROUND = """
 
 CURRENT_DATE = datetime.now().strftime("%Y-%m-%d")
 CURRENT_YEAR = str(datetime.now().year)
-BUCKET_NAME = 'c9-beetle-lmnh-plant-data'
+BUCKET_NAME = 'c9-beetle-lmnh-plant-data-terraform'
 
 
 def get_db_connection():
