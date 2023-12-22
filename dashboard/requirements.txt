@@ -7,3 +7,5 @@ python-dotenv
 sqlalchemy
 boto3
 pymssql
+streamlit
+altair
