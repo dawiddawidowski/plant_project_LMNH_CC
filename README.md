@@ -10,7 +10,7 @@ The project deliverables are:
 - A dashboard containing graphs of the latest temperature and moisture readings for every plant.
 
 
-## Architecture 
+## Architecture
 
 ### Architecture Diagram
 
@@ -36,7 +36,7 @@ This approach increases the speed of pipeline by allowing it to only process the
 
 ### Terraform
 
-Contained inside the terraform folder are two files: main.tf and variables.tf, the first contains all terraform code used to create all aws cloud infrastructure utilised, the latter contains the names of variables used in creating the infrastructure. The variables are sensitive so in re-creating this project, an additional file named terraform.tfvars should be created containing the specific values for these variables. 
+Contained inside the terraform folder are two files: main.tf and variables.tf, the first contains all terraform code used to create all aws cloud infrastructure utilised, the latter contains the names of variables used in creating the infrastructure. The variables are sensitive so in re-creating this project, an additional file named terraform.tfvars should be created containing the specific values for these variables.
 
 The main.tf file will create all infrastructure although to get the project up and running from this, you will need to upload the required Docker images to ECR repositories. Following this, all functionality should work as intended.
 
