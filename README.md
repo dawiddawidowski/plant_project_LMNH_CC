@@ -29,6 +29,29 @@ This approach increases the speed of pipeline by allowing it to only process the
 
 ![Alt text](erd_diagram.png)
 
+## Setup
+### Microsoft SQL Server
+
+- `brew install sqlcmd` to get the command-line tool
+- Activate a `venv`
+- Run this sequence of shell commands to set things up:
+`brew install FreeTDS
+export CFLAGS="-I$(brew --prefix openssl)/include"
+export LDFLAGS="-L$(brew --prefix openssl)/lib -L/usr/local/opt/openssl/lib"
+export CPPFLAGS="-I$(brew --prefix openssl)/include"
+pip install --pre --no-binary :all: pymssql --no-cache
+pip install sqlalchemy`
+
+#### Usage
+##### sqlcmd
+- 'sqlcmd -S [host],[port] -U [user] -P [password]' is the basic connection line
+- 'exit' to quit the interpreter
+- Add 'go' after every command to actually run them
+- '-i [filename]' on the end of the connection line to run a file
+- '-c [command]' on the end of the connection line to run a file
+
+###
+
 ## Assumptions Log
 
 Extract:
