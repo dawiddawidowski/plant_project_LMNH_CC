@@ -9,7 +9,7 @@ from unittest.mock import patch, MagicMock
 
 import requests
 
-from sample_extract import (extract_changing_plant_details)
+from multi_extract import extract_changing_plant_details
 
 sample_data = {
     "botanist": {
@@ -49,14 +49,11 @@ class TestTransientDataFunction(unittest.TestCase):
 
         mock_response = MagicMock()
         mock_response.json.return_value = sample_data
-
         mock_requests_get.return_value = mock_response
-        result = extract_changing_plant_details()
+        fake_plant_id = sample_data["plant_id"]
+        result = extract_changing_plant_details(fake_plant_id)
 
-        assert result["recording_taken"][0] == "2023-12-18 15:25:19"
-        assert result["recording_taken"].count() == 51
-        assert result["plant_id"].count() == 51
-        assert result["plant_id"][0] == 0
+        assert result["recording_taken"] == sample_data["recording_taken"]
 
     @unittest.mock.patch('sys.stdout', new_callable=io.StringIO)
     @patch('requests.get')
@@ -70,9 +67,9 @@ class TestTransientDataFunction(unittest.TestCase):
         mock_response.json.side_effect = requests.exceptions.JSONDecodeError(
             "JSONDecodeError", "", 1)
         mock_requests_get.return_value = mock_response
-        result = extract_changing_plant_details()
+        fake_plant_id = sample_data["plant_id"]
+        result = extract_changing_plant_details(fake_plant_id)
         console_output = mock_stdout.getvalue()
-        print(console_output)
 
         self.assertEqual(len(result), 0)
         assert "Error, Plant not found: " in console_output
@@ -88,9 +85,9 @@ class TestTransientDataFunction(unittest.TestCase):
         mock_response = MagicMock()
         mock_response.json.side_effect = requests.exceptions.HTTPError
         mock_requests_get.return_value = mock_response
-        result = extract_changing_plant_details()
+        fake_plant_id = sample_data["plant_id"]
+        result = extract_changing_plant_details(fake_plant_id)
         console_output = mock_stdout.getvalue()
-        print(console_output)
 
         self.assertEqual(len(result), 0)
         assert "An Http Error occurred: " in console_output
@@ -106,9 +103,9 @@ class TestTransientDataFunction(unittest.TestCase):
         mock_response = MagicMock()
         mock_response.json.side_effect = requests.exceptions.ConnectionError
         mock_requests_get.return_value = mock_response
-        result = extract_changing_plant_details()
+        fake_plant_id = sample_data["plant_id"]
+        result = extract_changing_plant_details(fake_plant_id)
         console_output = mock_stdout.getvalue()
-        print(console_output)
 
         self.assertEqual(len(result), 0)
         assert "An Error Connecting to the API occurred: " in console_output
@@ -124,9 +121,9 @@ class TestTransientDataFunction(unittest.TestCase):
         mock_response = MagicMock()
         mock_response.json.side_effect = requests.exceptions.Timeout
         mock_requests_get.return_value = mock_response
-        result = extract_changing_plant_details()
+        fake_plant_id = sample_data["plant_id"]
+        result = extract_changing_plant_details(fake_plant_id)
         console_output = mock_stdout.getvalue()
-        print(console_output)
 
         self.assertEqual(len(result), 0)
         assert "A Timeout Error occurred: " in console_output
@@ -142,9 +139,9 @@ class TestTransientDataFunction(unittest.TestCase):
         mock_response = MagicMock()
         mock_response.json.side_effect = requests.exceptions.RequestException
         mock_requests_get.return_value = mock_response
-        result = extract_changing_plant_details()
+        fake_plant_id = sample_data["plant_id"]
+        result = extract_changing_plant_details(fake_plant_id)
         console_output = mock_stdout.getvalue()
-        print(console_output)
 
         self.assertEqual(len(result), 0)
         assert "An Unknown Error occurred: " in console_output
