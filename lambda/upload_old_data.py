@@ -3,7 +3,6 @@ from datetime import datetime
 from os import environ
 
 import pandas as pd
-import boto3
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, sql
 import s3fs
@@ -33,7 +32,7 @@ def get_todays_data(connection) -> pd.DataFrame:
         return pd.DataFrame(res)
 
 
-def write_to_bucket(s3_client: boto3.client, data: pd.DataFrame) -> None:
+def write_to_bucket(data: pd.DataFrame) -> None:
     """converts the data into a csv file and writes to S3 bucket
     S3 object path and file name is the current date
     """
@@ -51,11 +50,9 @@ def write_to_bucket(s3_client: boto3.client, data: pd.DataFrame) -> None:
 
 
 def lambda_handler(event=None, context=None):
-
+    """Function called by Lambda to upload to S3"""
     db_conn = get_database_connection(environ)
     reading_data = get_todays_data(db_conn)
 
-    s3 = boto3.client('s3', aws_access_key_id=environ["AKI"],
-                      aws_secret_access_key=environ["SAK"])
-    write_to_bucket(s3, reading_data)
+    write_to_bucket(reading_data)
     print("File uploaded")

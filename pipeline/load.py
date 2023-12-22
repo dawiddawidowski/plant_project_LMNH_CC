@@ -35,11 +35,6 @@ def update_reading(connection, new_data: pd.DataFrame) -> None:
             fetched_botanist_query = conn.execute(botanist_id_query,
                                                   {"botanist_name": reading[6]}).fetchone()
 
-            # if not fetched_botanist_query:
-            # botanist doesn't exist
-            # insert botanist into botanist table (query database)
-            # fetch the most recent botanist id and use it in the reading insert query that follows
-
             error = reading[-1]
             try:
                 # Do not insert erroneous transactions
@@ -47,8 +42,10 @@ def update_reading(connection, new_data: pd.DataFrame) -> None:
                     botanist_id = fetched_botanist_query[0]
                     insert_query = sql.text(
                         """INSERT INTO s_gamma.reading
-                        (plant_id, botanist_id, soil_moisture, temperature, last_watered, recording_taken)
-                        VALUES (:plant, :botanist, :moisture, :temperature, :watered_at, :recording_at)""")
+                        (plant_id, botanist_id, soil_moisture,
+                          temperature, last_watered, recording_taken)
+                        VALUES (:plant, :botanist, :moisture,
+                          :temperature, :watered_at, :recording_at)""")
                     conn.execute(insert_query, {
                         "plant": plant_id,
                         "botanist": botanist_id,
